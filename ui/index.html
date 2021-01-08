@@ -35,12 +35,21 @@
 				</button>
 			</div>
 			<div id="settings">
+				<span>CH:</span>
 				<input id="channel" type="number" min="0" max="15" step="1">
 				<select id="instrument"></select>
+				<span>Octave:</span>
 				<input id="octave" type="number" min="1" max="6" step="1">
+				<span>Duration:</span>
 				<input id="duration" type="number" min="0" max="2000" step="100">
+				<span>Chords:</span>
+				<select id="chords">
+					<option value="off">Off</option>
+					<option value="partial">Partial</option>
+					<option value="full">Full</option>
+				</select>
 			</div>
-			<div id="keyboard" tabindex="1">
+			<div id="keyboard" tabindex="0">
 				<svg viewBox="0 0 1680 400">
 					<g>
 						<g>

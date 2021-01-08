@@ -65,6 +65,49 @@ input {
 	border: solid 1px white;
 }
 
+input:disabled {
+	color: #444;
+	border: solid 1px #444;
+}
+
+input[type="checkbox"] {
+	-webkit-appearance: none;
+	background: rgba(0, 0, 0, 0.5);
+	height: 1vw;
+	width: 1vw;
+	border: 1px solid white;
+	vertical-align: middle;
+}
+
+input[type="checkbox"]:checked {
+	background: rgba(255, 0, 0, 0.75);
+}
+
+input[type="checkbox"]:disabled {
+	border: 1px solid #444;
+}
+
+input[type=range] {
+	-webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+	background: #000;
+	height: 0.25vh;
+}
+
+input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	background: #f00;
+	width: 1vw;
+	height: 1vh;
+	transform: translate(0, -0.375vh);
+}
+
+input[type=range]:focus {
+	outline: none;
+}
+
 ::-webkit-scrollbar {
 	background: black;
 }
@@ -95,6 +138,12 @@ input {
 
 #settings {
 	display: flex;
+	align-items: center;
+}
+
+#settings span {
+	border: 1px solid white;
+	padding: 0.1vh 0.1vw;
 }
 
 #instrument {
