@@ -40,6 +40,12 @@ const keys = {
 
 const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 
+const minOctave = 1;
+const maxOctave = 7;
+
+const minDuration = 0;
+const maxDuration = 2000;
+
 var baseOctave = 3;
 
 var noteDuration = 500;
@@ -333,7 +339,7 @@ window.addEventListener('load', event => {
 	document.getElementById('octave').addEventListener('input', function(event) {
 		var octave = parseInt(this.value);
 
-		if (octave != NaN && octave > 0 && octave < 7) {
+		if (octave != NaN && octave >= minOctave && octave <= maxOctave) {
 			baseOctave = octave;
 		}
 
@@ -361,7 +367,7 @@ window.addEventListener('load', event => {
 	document.getElementById('duration').addEventListener('input', function(event) {
 		var duration = parseInt(this.value);
 
-		if (duration != NaN && duration >= 0 && duration <= 2000) {
+		if (duration != NaN && duration >= minDuration && duration <= maxDuration) {
 			noteDuration = duration;
 		}
 
@@ -379,14 +385,54 @@ window.addEventListener('load', event => {
 		MIDI.Player.stop();
 		this.blur();
 	});
-});
 
-window.addEventListener('keyup', event => {
-	event.preventDefault();
+	document.getElementById('keyboard').addEventListener('keyup', event => {
+		switch (event.keyCode) {
+			case 33:
+				if (baseOctave < maxOctave) {
+					++baseOctave;
+				}
+				document.getElementById('octave').value = baseOctave;
+				break;
+			case 34:
+				if (baseOctave > minOctave) {
+					--baseOctave;
+				}
+				document.getElementById('octave').value = baseOctave;
+				break;
+			case 45:
+				if (midiChannel < 15) {
+					++midiChannel;
+				}
+				document.getElementById('channel').value = midiChannel;
+				break;
+			case 46:
+				if (midiChannel > 0) {
+					--midiChannel;
+				}
+				document.getElementById('channel').value = midiChannel;
+				break;
+			case 36:
+				if (noteDuration < maxDuration) {
+					noteDuration += 100;
+				}
+				document.getElementById('duration').value = noteDuration;
+				break;
+			case 35:
+				if (noteDuration > minDuration) {
+					noteDuration -= 100;
+				}
+				document.getElementById('duration').value = noteDuration;
+				break;
+			default:
+				var id = keys[event.keyCode];
+				var key = document.getElementById(id);
 
-	var key = document.getElementById(keys[event.keyCode]);
+				if (key) {
+					activateKey(key, true);
+				}
 
-	if (key) {
-		activateKey(key, true);
-	}
+				break;
+		}
+	});
 });

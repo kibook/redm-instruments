@@ -9,6 +9,10 @@
 	user-select: none;
 }
 
+*:focus {
+	outline: none;
+}
+
 ::selection {
 	background-color: #d00;
 }
