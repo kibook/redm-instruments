@@ -90,6 +90,10 @@ function DetachFromInstrument(ped)
 end
 
 function StartPlayingInstrument(instrument)
+	if CurrentInstrument then
+		StopPlayingInstrument()
+	end
+
 	CurrentInstrument = Config.Instruments[instrument]
 
 	if not CurrentInstrument then
@@ -241,14 +245,18 @@ function GetInstrumentList()
 
 	table.sort(instruments)
 
-	return table.concat(instruments, '|')
+	return instruments
 end
 
 RegisterCommand('instrument', function(source, args, raw)
-	ShowUi()
+	if args[1] == 'quit' then
+		StopPlayingInstrument()
+	else
+		ShowUi()
 
-	if args[1] then
-		StartPlayingInstrument(args[1])
+		if args[1] then
+			StartPlayingInstrument(args[1])
+		end
 	end
 end)
 
@@ -288,7 +296,6 @@ RegisterNUICallback('playNote', function(data, cb)
 end)
 
 RegisterNUICallback('closeUi', function(data, cb)
-	StopPlayingInstrument()
 	HideUi()
 	cb({})
 end)
@@ -331,7 +338,7 @@ end)
 
 CreateThread(function()
 	TriggerEvent('chat:addSuggestion', '/instrument', 'Play an instrument', {
-		{name = 'instrument', help = GetInstrumentList()}
+		{name = 'instrument', help = table.concat(GetInstrumentList(), ', ') .. ', quit'}
 	})
 
 	while true do
@@ -341,7 +348,7 @@ CreateThread(function()
 			local ped = PlayerPedId()
 			local anim = GetAnimation()
 
-			if UiIsOpen and not IsEntityPlayingAnim(ped, anim.dict, anim.name, 1) then
+			if not IsEntityPlayingAnim(ped, anim.dict, anim.name, 1) then
 				PlayAnimation(ped, anim.dict, anim.name)
 			end
 		end
