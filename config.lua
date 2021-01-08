@@ -90,7 +90,7 @@ Config.Instruments = {
 	},
 	['guitar'] = {
 		midiInstrument = 'acoustic_guitar_nylon',
-		noteDuration = 300,
+		noteDuration = 500,
 		prop = {
 			model = 'p_guitar01x',
 			bone = 'SM_L_pistol',
