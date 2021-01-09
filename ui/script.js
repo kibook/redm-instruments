@@ -226,6 +226,9 @@ var chordMode = 0;
 
 var activatedKeys = {};
 
+var shiftKey = false;
+var ctrlKey = false;
+
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
 		method: 'POST',
@@ -367,6 +370,42 @@ function sendNoteOff(channel, note, octave, echo) {
 	}
 }
 
+function highlightKey(key, own) {
+	if (own) {
+		key.style.fill = '#f00';
+	} else {
+		key.style.fill = '#faa';
+	}
+}
+
+function unhighlightKey(key) {
+	key.style.fill = null;
+}
+
+function recvNoteOn(data) {
+	noteOn(data);
+
+	if (data.channel == midiChannel) {
+		var noteName = `${data.note}${data.octave}`;
+		var note = MIDI.keyToNote[noteName];
+		var key = midiNoteToKey(note);
+
+		highlightKey(key, false);
+	}
+}
+
+function recvNoteOff(data) {
+	noteOff(data);
+
+	if (data.channel == midiChannel) {
+		var noteName = `${data.note}${data.octave}`;
+		var note = MIDI.keyToNote[noteName];
+		var key = midiNoteToKey(note);
+
+		unhighlightKey(key);
+	}
+}
+
 function activateKey(key, echo) {
 	if (activatedKeys[key.id]) {
 		return;
@@ -379,7 +418,7 @@ function activateKey(key, echo) {
 
 	sendNoteOn(midiChannel, note, octave, echo);
 
-	key.style.fill = 'red';
+	highlightKey(key, true);
 
 	activatedKeys[key.id] = true;
 }
@@ -396,7 +435,7 @@ function deactivateKey(key, echo) {
 
 	sendNoteOff(midiChannel, note, octave, echo);
 
-	key.style.fill = null;
+	unhighlightKey(key);
 
 	activatedKeys[key.id] = false;
 }
@@ -505,9 +544,6 @@ function playMidi(url) {
 	});
 }
 
-var shiftKey = false;
-var ctrlKey = false;
-
 function getChordKeys(event) {
 	if (shiftKey) {
 		return chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
@@ -573,10 +609,10 @@ window.addEventListener('message', event => {
 			hideUi();
 			break;
 		case 'noteOn':
-			noteOn(event.data);
+			recvNoteOn(event.data);
 			break;
 		case 'noteOff':
-			noteOff(event.data);
+			recvNoteOff(event.data);
 			break;
 		case 'setInstrumentPreset':
 			setInstrumentPreset(event.data);
