@@ -1,9 +1,11 @@
 local UiIsOpen = false
 
 local CurrentInstrument
-local ActivePlayingTimer = 0
+local NotesPlaying = 0
+local ActivelyPlayingTimer = 0
 
-RegisterNetEvent('instruments:playNote')
+RegisterNetEvent('instruments:noteOn')
+RegisterNetEvent('instruments:noteOff')
 
 local entityEnumerator = {
 	__gc = function(enum)
@@ -105,7 +107,6 @@ function StartPlayingInstrument(instrument)
 	SendNUIMessage({
 		type = 'setInstrumentPreset',
 		instrument = CurrentInstrument.midiInstrument,
-		noteDuration = CurrentInstrument.noteDuration
 	})
 
 	if CurrentInstrument.attachTo and not AttachToInstrument(ped, CurrentInstrument.attachTo) then
@@ -217,7 +218,7 @@ function GetListenerInfo()
 end
 
 function GetAnimation()
-	if GetSystemTime() < ActivePlayingTimer then
+	if NotesPlaying > 0 or GetSystemTime() < ActivelyPlayingTimer then
 		return CurrentInstrument.activeAnimation
 	else
 		return CurrentInstrument.inactiveAnimation
@@ -264,7 +265,6 @@ RegisterNUICallback('init', function(data, cb)
 	cb({
 		maxVolume = Config.MaxVolume,
 		baseOctave = Config.BaseOctave,
-		noteDuration = Config.NoteDuration,
 		minAttenuationFactor = Config.MinAttenuationFactor,
 		maxAttenuationFactor = Config.MaxAttenuationFactor,
 		minVolumeFactor = Config.MinVolumeFactor,
@@ -274,10 +274,22 @@ RegisterNUICallback('init', function(data, cb)
 	})
 end)
 
-RegisterNUICallback('playNote', function(data, cb)
-	TriggerServerEvent('instruments:playNote', data.channel, data.instrument, data.note, data.octave, data.duration)
+RegisterNUICallback('noteOn', function(data, cb)
+	TriggerServerEvent('instruments:noteOn', data.channel, data.instrument, data.note, data.octave)
 
-	ActivePlayingTimer = GetSystemTime() + data.duration + 500
+	NotesPlaying = NotesPlaying + 1
+
+	cb({})
+end)
+
+RegisterNUICallback('noteOff', function(data, cb)
+	TriggerServerEvent('instruments:noteOff', data.channel, data.note, data.octave)
+
+	NotesPlaying = NotesPlaying - 1
+
+	if NotesPlaying == 0 then
+		ActivelyPlayingTimer = GetSystemTime() + 500
+	end
 
 	cb({})
 end)
@@ -298,7 +310,7 @@ AddEventHandler('onResourceStop', function(resourceName)
 	end
 end)
 
-AddEventHandler('instruments:playNote', function(serverId, channel, instrument, note, octave, duration)
+AddEventHandler('instruments:noteOn', function(serverId, channel, instrument, note, octave)
 	local player = GetPlayerFromServerId(serverId)
 
 	if player == PlayerId() then
@@ -311,14 +323,34 @@ AddEventHandler('instruments:playNote', function(serverId, channel, instrument, 
 
 	if distance <= Config.MaxNoteDistance then
 		SendNUIMessage({
-			type = 'playNote',
+			type = 'noteOn',
 			channel = channel,
 			instrument = instrument,
 			note = note,
 			octave = octave,
-			duration = duration,
 			distance = distance,
 			sameRoom = IsInSameRoom(listener, soundSource)
+		})
+	end
+end)
+
+AddEventHandler('instruments:noteOff', function(serverId, channel, note, octave)
+	local player = GetPlayerFromServerId(serverId)
+
+	if player == PlayerId() then
+		return
+	end
+
+	local listener, listenerCoords = GetListenerInfo()
+	local soundSource = GetPlayerPed(player)
+	local distance = #(listenerCoords - GetEntityCoords(soundSource))
+
+	if distance <= Config.MaxNoteDistance then
+		SendNUIMessage({
+			type = 'noteOff',
+			channel = channel,
+			note = note,
+			octave = octave
 		})
 	end
 end)

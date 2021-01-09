@@ -205,12 +205,7 @@ const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const minOctave = 1;
 const maxOctave = 7;
 
-const minDuration = 0;
-const maxDuration = 2000;
-
 var baseOctave = 3;
-
-var noteDuration = 500;
 
 var maxVolume = 1.0;
 
@@ -228,6 +223,8 @@ var midiChannel = 0;
 var channels = {};
 
 var chordMode = 0;
+
+var activatedKeys = {};
 
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
@@ -298,7 +295,7 @@ function setInstrument(channel, instrument) {
 	});
 }
 
-function playNote(data) {
+function noteOn(data) {
 	var noteName = `${data.note}${data.octave}`;
 	var note = MIDI.keyToNote[noteName];
 
@@ -316,11 +313,17 @@ function playNote(data) {
 		MIDI.programChange(data.channel, MIDI.GM.byName[data.instrument].number);
 		MIDI.setVolume(data.channel, volume);
 		MIDI.noteOn(data.channel, note, 127, 0);
-		MIDI.noteOff(data.channel, note, data.duration / 1000);
 	});
 }
 
-function sendNote(channel, note, octave, echo) {
+function noteOff(data) {
+	var noteName = `${data.note}${data.octave}`;
+	var note = MIDI.keyToNote[noteName];
+
+	MIDI.noteOff(data.channel, note, 0);
+}
+
+function sendNoteOn(channel, note, octave, echo) {
 	var instrument;
 	
 	if (channels[channel]) {
@@ -329,38 +332,73 @@ function sendNote(channel, note, octave, echo) {
 		instrument = document.getElementById('instrument').value;
 	}
 
-	sendMessage('playNote', {
+	sendMessage('noteOn', {
 		channel: channel,
 		instrument: instrument,
 		note: note,
-		octave: octave,
-		duration: noteDuration
+		octave: octave
 	});
 
 	if (echo) {
-		playNote({
+		noteOn({
 			channel: channel,
 			instrument: instrument,
 			note: note,
 			octave: octave,
-			duration: noteDuration,
 			distance: 0,
-			sameRoom: true
+			sameRoom: true,
+		})
+	}
+}
+
+function sendNoteOff(channel, note, octave, echo) {
+	sendMessage('noteOff', {
+		channel: channel,
+		note: note,
+		octave: octave
+	});
+
+	if (echo) {
+		noteOff({
+			channel: channel,
+			note: note,
+			octave: octave
 		})
 	}
 }
 
 function activateKey(key, echo) {
+	if (activatedKeys[key.id]) {
+		return;
+	}
+
 	var note = key.getAttribute('data-note');
 	var octave = key.getAttribute('data-octave');
 
 	octave = parseInt(octave) + baseOctave;
 
-	sendNote(midiChannel, note, octave, echo);
+	sendNoteOn(midiChannel, note, octave, echo);
 
 	key.style.fill = 'red';
-	setTimeout(() => key.style.fill = null, 50);
 
+	activatedKeys[key.id] = true;
+}
+
+function deactivateKey(key, echo) {
+	if (!activatedKeys[key.id]) {
+		return;
+	}
+
+	var note = key.getAttribute('data-note');
+	var octave = key.getAttribute('data-octave');
+
+	octave = parseInt(octave) + baseOctave;
+
+	sendNoteOff(midiChannel, note, octave, echo);
+
+	key.style.fill = null;
+
+	activatedKeys[key.id] = false;
 }
 
 function midiNoteName(note) {
@@ -396,16 +434,32 @@ function setSoundfont(soundfontUrl, instrumentsUrl) {
 		});
 
 		MIDI.Player.addListener(function(data) {
-			if (data.message == 144) {
-				var key = midiNoteToKey(data.note);
+			var key = midiNoteToKey(data.note);
 
-				if (key && data.channel == midiChannel) {
-					activateKey(key, false);
-				} else {
-					var noteName = midiNoteName(data.note);
-					var octave = midiNoteOctave(data.note);
+			if (key && data.channel == midiChannel) {
+				switch (data.message) {
+					case 128:
+						deactivateKey(key, false);
+						break;
+					case 144:
+						activateKey(key, false);
+						break;
+					default:
+						break;
+				}
+			} else {
+				var noteName = midiNoteName(data.note);
+				var octave = midiNoteOctave(data.note);
 
-					sendNote(data.channel, noteName, octave, false);
+				switch(data.message) {
+					case 128:
+						sendNoteOff(data.channel, noteName, octave, false);
+						break;
+					case 144:
+						sendNoteOn(data.channel, noteName, octave, false);
+						break;
+					default:
+						break;
 				}
 			}
 		});
@@ -415,9 +469,6 @@ function setSoundfont(soundfontUrl, instrumentsUrl) {
 function setInstrumentPreset(data) {
 	document.getElementById('instrument').value = data.instrument;
 	setInstrument(midiChannel, data.instrument);
-
-	document.getElementById('duration').value = data.noteDuration;
-	noteDuration = data.noteDuration;
 }
 
 function timeToString(time) {
@@ -454,44 +505,44 @@ function playMidi(url) {
 	});
 }
 
-window.addEventListener('message', event => {
-	switch (event.data.type) {
-		case 'showUi':
-			showUi();
-			break;
-		case 'hideUi':
-			hideUi();
-			break;
-		case 'playNote':
-			playNote(event.data);
-			break;
-		case 'setInstrumentPreset':
-			setInstrumentPreset(event.data);
-			break;
-	}
-});
+var shiftKey = false;
+var ctrlKey = false;
 
-function playKey(key, echo, event) {
+function getChordKeys(event) {
+	if (shiftKey) {
+		return chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
+	} else if (ctrlKey) {
+		return chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
+	} else {
+		return chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
+	}
+}
+
+function pressKey(key, event) {
 	var keys;
 
 	if (chordMode > 0) {
-		var chordKeys;
-
-		if (event.shiftKey) {
-			chordKeys = chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
-		} else if (event.ctrlKey) {
-			chordKeys = chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
-		} else {
-			chordKeys = chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
-		}
-
-		keys = chordKeys[key.id];
+		keys = getChordKeys(event)[key.id];
 	}
 
 	if (keys) {
-		keys.forEach(key => activateKey(document.getElementById(key), echo));
+		keys.forEach(key => activateKey(document.getElementById(key), true));
 	} else {
-		activateKey(key, echo);
+		activateKey(key, true);
+	}
+}
+
+function releaseKey(key, event) {
+	var keys;
+
+	if (chordMode > 0) {
+		keys = getChordKeys(event)[key.id];
+	}
+
+	if (keys) {
+		keys.forEach(key => deactivateKey(document.getElementById(key), true));
+	} else {
+		deactivateKey(key, true);
 	}
 }
 
@@ -513,15 +564,32 @@ function cycleChordMode() {
 	}
 }
 
+window.addEventListener('message', event => {
+	switch (event.data.type) {
+		case 'showUi':
+			showUi();
+			break;
+		case 'hideUi':
+			hideUi();
+			break;
+		case 'noteOn':
+			noteOn(event.data);
+			break;
+		case 'noteOff':
+			noteOff(event.data);
+			break;
+		case 'setInstrumentPreset':
+			setInstrumentPreset(event.data);
+			break;
+	}
+});
+
 window.addEventListener('load', event => {
 	sendMessage('init', {}).then(resp => resp.json()).then(resp => {
 		baseOctave = resp.baseOctave;
 		document.getElementById('octave').value = baseOctave;
 
 		maxVolume = resp.maxVolume;
-
-		noteDuration = resp.noteDuration;
-		document.getElementById('duration').value = noteDuration;
 
 		minAttenuationFactor = resp.minAttenuationFactor;
 		maxAttenuationFactor = resp.maxAttenuationFactor;
@@ -537,8 +605,16 @@ window.addEventListener('load', event => {
 	});
 
 	document.querySelectorAll('.piano-key').forEach(key => {
-		key.addEventListener('click', function(event) {
-			playKey(this, true, event);
+		key.addEventListener('mousedown', function(event) {
+			pressKey(this, event);
+		});
+
+		key.addEventListener('mouseup', function(event) {
+			releaseKey(this, event, true);
+		});
+
+		key.addEventListener('mouseout', function(event) {
+			releaseKey(this, event, true);
 		});
 	});
 
@@ -582,18 +658,6 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
-	document.getElementById('duration').addEventListener('input', function(event) {
-		var duration = parseInt(this.value);
-
-		if (duration != NaN && duration >= minDuration && duration <= maxDuration) {
-			noteDuration = duration;
-		}
-
-		this.value = noteDuration;
-
-		document.getElementById('keyboard').focus();
-	});
-
 	document.getElementById('play').addEventListener('click', function(event) {
 		playMidi(document.getElementById('url').value);
 		document.getElementById('keyboard').focus();
@@ -621,7 +685,7 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
-	document.getElementById('keyboard').addEventListener('keyup', event => {
+	document.getElementById('keyboard').addEventListener('keydown', event => {
 		switch (event.keyCode) {
 			case 33: // Page Down
 				if (baseOctave < maxOctave) {
@@ -647,27 +711,56 @@ window.addEventListener('load', event => {
 				}
 				document.getElementById('channel').value = midiChannel;
 				break;
-			case 36: // Insert
-				if (noteDuration < maxDuration) {
-					noteDuration += 100;
-				}
-				document.getElementById('duration').value = noteDuration;
-				break;
-			case 35: // Delete
-				if (noteDuration > minDuration) {
-					noteDuration -= 100;
-				}
-				document.getElementById('duration').value = noteDuration;
-				break;
 			case 192: // ~
 				cycleChordMode();
 				break;
 			default:
 				var key = keys[event.keyCode];
+
 				if (key) {
-					playKey(document.getElementById(key), true, event);
+					pressKey(document.getElementById(key), event);
 				}
+
 				break;
 		}
 	});
+
+	document.getElementById('keyboard').addEventListener('keyup', event => {
+		switch (event.keyCode) {
+			default:
+				var key = keys[event.keyCode];
+
+				if (key) {
+					releaseKey(document.getElementById(key), true, event);
+				}
+
+				break;
+		}
+	});
+});
+
+window.addEventListener('keydown', event => {
+	switch (event.keyCode) {
+		case 16: // Shift
+			shiftKey = true;
+			break;
+		case 17: // Ctrl
+			ctrlKey = true;
+			break;
+		default:
+			break;
+	}
+});
+
+window.addEventListener('keyup', event => {
+	switch (event.keyCode) {
+		case 16: // Shift
+			shiftKey = false;
+			break;
+		case 17: // Ctrl
+			ctrlKey = false;
+			break;
+		default:
+			break;
+	}
 });
