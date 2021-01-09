@@ -55,11 +55,13 @@ Config.Instruments = {
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@piano@male@normal',
-			name = 'piano_base'
+			name = 'piano_base',
+			flag = 1
 		},
 		activeAnimation = {
 			dict = 'ai_gestures@instruments@piano@male@normal',
-			name = 'piano_fast_l_-1_0_+1_r_-1_0_+1_chords_01'
+			name = 'piano_fast_l_-1_0_+1_r_-1_0_+1_chords_01',
+			flag = 1
 		}
 	},
 	['trumpet'] = {
@@ -76,11 +78,13 @@ Config.Instruments = {
 		},
 		inactiveAnimation = {
 			dict = 'amb_misc@world_human_trumpet@male_a@base',
-			name = 'base'
+			name = 'base',
+			flag = 25
 		},
 		activeAnimation = {
 			dict = 'ai_gestures@instruments@trumpet@standing@140bpm',
-			name = 'upbeat_cen_002'
+			name = 'upbeat_cen_002',
+			flag = 25
 		}
 	},
 	['guitar'] = {
@@ -97,11 +101,13 @@ Config.Instruments = {
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@guitar@standing@male@normal',
-			name = 'guitar_base'
+			name = 'guitar_base',
+			flag = 25
 		},
 		activeAnimation = {
 			dict = 'ai_gestures@instruments@guitar@standing@male@normal',
-			name = 'guitar_med_melody_-1_0_+1_01'
+			name = 'guitar_med_melody_-1_0_+1_01',
+			flag = 25
 		}
 	},
 	['harp'] = {
@@ -119,11 +125,13 @@ Config.Instruments = {
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@band_test',
-			name = 'p_base'
+			name = 'p_base',
+			flag = 1
 		},
 		activeAnimation = {
 			dict = 'ai_gestures@instruments@band_test',
-			name = 'p_playing'
+			name = 'p_playing',
+			flag = 1
 		}
 	}
 }

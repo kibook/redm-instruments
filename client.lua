@@ -225,16 +225,16 @@ function GetAnimation()
 	end
 end
 
-function PlayAnimation(ped, dict, name)
-	RequestAnimDict(dict)
+function PlayAnimation(ped, anim)
+	RequestAnimDict(anim.dict)
 
-	while not HasAnimDictLoaded(dict) do
+	while not HasAnimDictLoaded(anim.dict) do
 		Wait(0)
 	end
 
-	TaskPlayAnim(ped, dict, name, 1.0, 1.0, -1, 1, 0, false, false, false, '', false)
+	TaskPlayAnim(ped, anim.dict, anim.name, 1.0, 1.0, -1, anim.flag, 0, false, false, false, '', false)
 
-	RemoveAnimDict(dict)
+	RemoveAnimDict(anim.dict)
 end
 
 function GetInstrumentList()
@@ -367,8 +367,8 @@ CreateThread(function()
 			local ped = PlayerPedId()
 			local anim = GetAnimation()
 
-			if not IsEntityPlayingAnim(ped, anim.dict, anim.name, 1) then
-				PlayAnimation(ped, anim.dict, anim.name)
+			if not IsEntityPlayingAnim(ped, anim.dict, anim.name, anim.flag) then
+				PlayAnimation(ped, anim)
 			end
 		end
 	end
