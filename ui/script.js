@@ -520,11 +520,10 @@ function timeToString(time) {
 }
 
 function updateMidiPlayTime() {
+	document.getElementById('time').innerHTML = timeToString(MIDI.Player.currentTime) + '/' + timeToString(MIDI.Player.endTime);
+
 	if (MIDI.Player.playing) {
-		document.getElementById('time').innerHTML = timeToString(MIDI.Player.currentTime) + '/' + timeToString(MIDI.Player.endTime);
 		setTimeout(updateMidiPlayTime, 1000);
-	} else {
-		document.getElementById('time').innerHTML = '00:00:00/00:00:00';
 	}
 }
 
@@ -538,8 +537,8 @@ function playMidi(url) {
 		}
 
 		Promise.all(promises).then(() => {
-			MIDI.Player.start();
 			updateMidiPlayTime();
+			MIDI.Player.start();
 		});
 	});
 }

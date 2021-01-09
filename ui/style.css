@@ -160,4 +160,5 @@ input[type=range]:focus {
 
 #time {
 	border: solid 1px white;
+	padding: 0 0.1vw;
 }
