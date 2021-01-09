@@ -205,12 +205,7 @@ const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const minOctave = 1;
 const maxOctave = 7;
 
-const minDuration = 0;
-const maxDuration = 2000;
-
 var baseOctave = 3;
-
-var noteDuration = 500;
 
 var maxVolume = 1.0;
 
@@ -474,9 +469,6 @@ function setSoundfont(soundfontUrl, instrumentsUrl) {
 function setInstrumentPreset(data) {
 	document.getElementById('instrument').value = data.instrument;
 	setInstrument(midiChannel, data.instrument);
-
-	document.getElementById('duration').value = data.noteDuration;
-	noteDuration = data.noteDuration;
 }
 
 function timeToString(time) {
@@ -599,9 +591,6 @@ window.addEventListener('load', event => {
 
 		maxVolume = resp.maxVolume;
 
-		noteDuration = resp.noteDuration;
-		document.getElementById('duration').value = noteDuration;
-
 		minAttenuationFactor = resp.minAttenuationFactor;
 		maxAttenuationFactor = resp.maxAttenuationFactor;
 		attenuationFactor = minAttenuationFactor;
@@ -669,18 +658,6 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
-	document.getElementById('duration').addEventListener('input', function(event) {
-		var duration = parseInt(this.value);
-
-		if (duration != NaN && duration >= minDuration && duration <= maxDuration) {
-			noteDuration = duration;
-		}
-
-		this.value = noteDuration;
-
-		document.getElementById('keyboard').focus();
-	});
-
 	document.getElementById('play').addEventListener('click', function(event) {
 		playMidi(document.getElementById('url').value);
 		document.getElementById('keyboard').focus();
@@ -733,18 +710,6 @@ window.addEventListener('load', event => {
 					--midiChannel;
 				}
 				document.getElementById('channel').value = midiChannel;
-				break;
-			case 36: // Insert
-				if (noteDuration < maxDuration) {
-					noteDuration += 100;
-				}
-				document.getElementById('duration').value = noteDuration;
-				break;
-			case 35: // Delete
-				if (noteDuration > minDuration) {
-					noteDuration -= 100;
-				}
-				document.getElementById('duration').value = noteDuration;
 				break;
 			case 192: // ~
 				cycleChordMode();

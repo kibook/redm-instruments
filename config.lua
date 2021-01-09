@@ -14,9 +14,6 @@ Config.MaxVolumeFactor = 4.0
 -- The base octave of notes
 Config.BaseOctave = 3
 
--- Default length of notes
-Config.NoteDuration = 500
-
 -- Maximum distance at which to interact with stationary instrument objects
 Config.MaxInteractDistance = 2.0
 
@@ -41,7 +38,6 @@ Config.InstrumentsUrl = 'https://gleitz.github.io/midi-js-soundfonts/FatBoy/name
 Config.Instruments = {
 	['piano'] = {
 		midiInstrument = 'acoustic_grand_piano',
-		noteDuration = 500,
 		attachTo = {
 			models = {
 				'p_nbmpiano01x',
@@ -68,7 +64,6 @@ Config.Instruments = {
 	},
 	['trumpet'] = {
 		midiInstrument = 'trumpet',
-		noteDuration = 200,
 		prop = {
 			model = 'p_trumpet01x',
 			bone = 'SKEL_R_Hand',
@@ -90,7 +85,6 @@ Config.Instruments = {
 	},
 	['guitar'] = {
 		midiInstrument = 'acoustic_guitar_nylon',
-		noteDuration = 500,
 		prop = {
 			model = 'p_guitar01x',
 			bone = 'SM_L_pistol',
@@ -112,7 +106,6 @@ Config.Instruments = {
 	},
 	['harp'] = {
 		midiInstrument = 'orchestral_harp',
-		noteDuration = 1000,
 		attachTo = {
 			models = {
 				'p_harp01x'

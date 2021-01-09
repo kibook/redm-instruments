@@ -107,7 +107,6 @@ function StartPlayingInstrument(instrument)
 	SendNUIMessage({
 		type = 'setInstrumentPreset',
 		instrument = CurrentInstrument.midiInstrument,
-		noteDuration = CurrentInstrument.noteDuration
 	})
 
 	if CurrentInstrument.attachTo and not AttachToInstrument(ped, CurrentInstrument.attachTo) then
@@ -266,7 +265,6 @@ RegisterNUICallback('init', function(data, cb)
 	cb({
 		maxVolume = Config.MaxVolume,
 		baseOctave = Config.BaseOctave,
-		noteDuration = Config.NoteDuration,
 		minAttenuationFactor = Config.MinAttenuationFactor,
 		maxAttenuationFactor = Config.MaxAttenuationFactor,
 		minVolumeFactor = Config.MinVolumeFactor,
