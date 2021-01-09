@@ -229,6 +229,8 @@ var channels = {};
 
 var chordMode = 0;
 
+var activatedKeys = {};
+
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
 		method: 'POST',
@@ -298,7 +300,7 @@ function setInstrument(channel, instrument) {
 	});
 }
 
-function playNote(data) {
+function noteOn(data) {
 	var noteName = `${data.note}${data.octave}`;
 	var note = MIDI.keyToNote[noteName];
 
@@ -316,11 +318,17 @@ function playNote(data) {
 		MIDI.programChange(data.channel, MIDI.GM.byName[data.instrument].number);
 		MIDI.setVolume(data.channel, volume);
 		MIDI.noteOn(data.channel, note, 127, 0);
-		MIDI.noteOff(data.channel, note, data.duration / 1000);
 	});
 }
 
-function sendNote(channel, note, octave, echo) {
+function noteOff(data) {
+	var noteName = `${data.note}${data.octave}`;
+	var note = MIDI.keyToNote[noteName];
+
+	MIDI.noteOff(data.channel, note, 0);
+}
+
+function sendNoteOn(channel, note, octave, echo) {
 	var instrument;
 	
 	if (channels[channel]) {
@@ -329,27 +337,73 @@ function sendNote(channel, note, octave, echo) {
 		instrument = document.getElementById('instrument').value;
 	}
 
-	sendMessage('playNote', {
-		echo: echo,
+	sendMessage('noteOn', {
 		channel: channel,
 		instrument: instrument,
 		note: note,
-		octave: octave,
-		duration: noteDuration
+		octave: octave
 	});
+
+	if (echo) {
+		noteOn({
+			channel: channel,
+			instrument: instrument,
+			note: note,
+			octave: octave,
+			distance: 0,
+			sameRoom: true,
+		})
+	}
+}
+
+function sendNoteOff(channel, note, octave, echo) {
+	sendMessage('noteOff', {
+		channel: channel,
+		note: note,
+		octave: octave
+	});
+
+	if (echo) {
+		noteOff({
+			channel: channel,
+			note: note,
+			octave: octave
+		})
+	}
 }
 
 function activateKey(key, echo) {
+	if (activatedKeys[key.id]) {
+		return;
+	}
+
 	var note = key.getAttribute('data-note');
 	var octave = key.getAttribute('data-octave');
 
 	octave = parseInt(octave) + baseOctave;
 
-	sendNote(midiChannel, note, octave, echo);
+	sendNoteOn(midiChannel, note, octave, echo);
 
 	key.style.fill = 'red';
-	setTimeout(() => key.style.fill = null, 50);
 
+	activatedKeys[key.id] = true;
+}
+
+function deactivateKey(key, echo) {
+	if (!activatedKeys[key.id]) {
+		return;
+	}
+
+	var note = key.getAttribute('data-note');
+	var octave = key.getAttribute('data-octave');
+
+	octave = parseInt(octave) + baseOctave;
+
+	sendNoteOff(midiChannel, note, octave, echo);
+
+	key.style.fill = null;
+
+	activatedKeys[key.id] = false;
 }
 
 function midiNoteName(note) {
@@ -385,16 +439,32 @@ function setSoundfont(soundfontUrl, instrumentsUrl) {
 		});
 
 		MIDI.Player.addListener(function(data) {
-			if (data.message == 144) {
-				var key = midiNoteToKey(data.note);
+			var key = midiNoteToKey(data.note);
 
-				if (key && data.channel == midiChannel) {
-					activateKey(key, false);
-				} else {
-					var noteName = midiNoteName(data.note);
-					var octave = midiNoteOctave(data.note);
+			if (key && data.channel == midiChannel) {
+				switch (data.message) {
+					case 128:
+						deactivateKey(key, false);
+						break;
+					case 144:
+						activateKey(key, false);
+						break;
+					default:
+						break;
+				}
+			} else {
+				var noteName = midiNoteName(data.note);
+				var octave = midiNoteOctave(data.note);
 
-					sendNote(data.channel, noteName, octave, false);
+				switch(data.message) {
+					case 128:
+						sendNoteOff(data.channel, noteName, octave, false);
+						break;
+					case 144:
+						sendNoteOn(data.channel, noteName, octave, false);
+						break;
+					default:
+						break;
 				}
 			}
 		});
@@ -443,44 +513,41 @@ function playMidi(url) {
 	});
 }
 
-window.addEventListener('message', event => {
-	switch (event.data.type) {
-		case 'showUi':
-			showUi();
-			break;
-		case 'hideUi':
-			hideUi();
-			break;
-		case 'playNote':
-			playNote(event.data);
-			break;
-		case 'setInstrumentPreset':
-			setInstrumentPreset(event.data);
-			break;
+function getChordKeys(event) {
+	if (event.shiftKey) {
+		return chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
+	} else if (event.ctrlKey) {
+		return chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
+	} else {
+		return chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
 	}
-});
+}
 
-function playKey(key, echo, event) {
+function pressKey(key, event) {
 	var keys;
 
 	if (chordMode > 0) {
-		var chordKeys;
-
-		if (event.shiftKey) {
-			chordKeys = chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
-		} else if (event.ctrlKey) {
-			chordKeys = chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
-		} else {
-			chordKeys = chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
-		}
-
-		keys = chordKeys[key.id];
+		keys = getChordKeys(event)[key.id];
 	}
 
 	if (keys) {
-		keys.forEach(key => activateKey(document.getElementById(key), echo));
+		keys.forEach(key => activateKey(document.getElementById(key), true));
 	} else {
-		activateKey(key, echo);
+		activateKey(key, true);
+	}
+}
+
+function releaseKey(key, event) {
+	var keys;
+
+	if (chordMode > 0) {
+		keys = getChordKeys(event)[key.id];
+	}
+
+	if (keys) {
+		keys.forEach(key => deactivateKey(document.getElementById(key), true));
+	} else {
+		deactivateKey(key, true);
 	}
 }
 
@@ -501,6 +568,26 @@ function cycleChordMode() {
 			break;
 	}
 }
+
+window.addEventListener('message', event => {
+	switch (event.data.type) {
+		case 'showUi':
+			showUi();
+			break;
+		case 'hideUi':
+			hideUi();
+			break;
+		case 'noteOn':
+			noteOn(event.data);
+			break;
+		case 'noteOff':
+			noteOff(event.data);
+			break;
+		case 'setInstrumentPreset':
+			setInstrumentPreset(event.data);
+			break;
+	}
+});
 
 window.addEventListener('load', event => {
 	sendMessage('init', {}).then(resp => resp.json()).then(resp => {
@@ -526,8 +613,16 @@ window.addEventListener('load', event => {
 	});
 
 	document.querySelectorAll('.piano-key').forEach(key => {
-		key.addEventListener('click', function(event) {
-			playKey(this, true, event);
+		key.addEventListener('mousedown', function(event) {
+			pressKey(this, event);
+		});
+
+		key.addEventListener('mouseup', function(event) {
+			releaseKey(this, event, true);
+		});
+
+		key.addEventListener('mouseout', function(event) {
+			releaseKey(this, event, true);
 		});
 	});
 
@@ -610,7 +705,7 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
-	document.getElementById('keyboard').addEventListener('keyup', event => {
+	document.getElementById('keyboard').addEventListener('keydown', event => {
 		switch (event.keyCode) {
 			case 33: // Page Down
 				if (baseOctave < maxOctave) {
@@ -653,10 +748,20 @@ window.addEventListener('load', event => {
 				break;
 			default:
 				var key = keys[event.keyCode];
+
 				if (key) {
-					playKey(document.getElementById(key), true, event);
+					pressKey(document.getElementById(key), event);
 				}
+
 				break;
+		}
+	});
+
+	document.getElementById('keyboard').addEventListener('keyup', event => {
+		var key = keys[event.keyCode];
+
+		if (key) {
+			releaseKey(document.getElementById(key), true, event);
 		}
 	});
 });

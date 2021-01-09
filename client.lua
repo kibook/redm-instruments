@@ -3,7 +3,8 @@ local UiIsOpen = false
 local CurrentInstrument
 local ActivePlayingTimer = 0
 
-RegisterNetEvent('instruments:playNote')
+RegisterNetEvent('instruments:noteOn')
+RegisterNetEvent('instruments:noteOff')
 
 local entityEnumerator = {
 	__gc = function(enum)
@@ -274,23 +275,18 @@ RegisterNUICallback('init', function(data, cb)
 	})
 end)
 
-RegisterNUICallback('playNote', function(data, cb)
-	TriggerServerEvent('instruments:playNote', data.channel, data.instrument, data.note, data.octave, data.duration)
+RegisterNUICallback('noteOn', function(data, cb)
+	TriggerServerEvent('instruments:noteOn', data.channel, data.instrument, data.note, data.octave)
 
-	ActivePlayingTimer = GetSystemTime() + data.duration + 500
+	ActivePlayingTimer = GetSystemTime() + 500
 
-	if data.echo then
-		SendNUIMessage({
-			type = 'playNote',
-			channel = data.channel,
-			instrument = data.instrument,
-			note = data.note,
-			octave = data.octave,
-			duration = data.duration,
-			distance = 0,
-			sameRoom = true
-		})
-	end
+	cb({})
+end)
+
+RegisterNUICallback('noteOff', function(data, cb)
+	TriggerServerEvent('instruments:noteOff', data.channel, data.note, data.octave)
+
+	ActivePlayingTimer = GetSystemTime() + 500
 
 	cb({})
 end)
@@ -311,7 +307,7 @@ AddEventHandler('onResourceStop', function(resourceName)
 	end
 end)
 
-AddEventHandler('instruments:playNote', function(serverId, channel, instrument, note, octave, duration)
+AddEventHandler('instruments:noteOn', function(serverId, channel, instrument, note, octave)
 	local player = GetPlayerFromServerId(serverId)
 
 	if player == PlayerId() then
@@ -324,16 +320,30 @@ AddEventHandler('instruments:playNote', function(serverId, channel, instrument, 
 
 	if distance <= Config.MaxNoteDistance then
 		SendNUIMessage({
-			type = 'playNote',
+			type = 'noteOn',
 			channel = channel,
 			instrument = instrument,
 			note = note,
 			octave = octave,
-			duration = duration,
 			distance = distance,
 			sameRoom = IsInSameRoom(listener, soundSource)
 		})
 	end
+end)
+
+AddEventHandler('instruments:noteOff', function(serverId, channel, note, octave)
+	local player = GetPlayerFromServerId(serverId)
+
+	if player == PlayerId() then
+		return
+	end
+
+	SendNUIMessage({
+		type = 'noteOff',
+		channel = channel,
+		note = note,
+		octave = octave
+	})
 end)
 
 CreateThread(function()
