@@ -513,10 +513,13 @@ function playMidi(url) {
 	});
 }
 
+var shiftKey = false;
+var ctrlKey = false;
+
 function getChordKeys(event) {
-	if (event.shiftKey) {
+	if (shiftKey) {
 		return chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
-	} else if (event.ctrlKey) {
+	} else if (ctrlKey) {
 		return chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
 	} else {
 		return chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
@@ -758,10 +761,41 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('keyboard').addEventListener('keyup', event => {
-		var key = keys[event.keyCode];
+		switch (event.keyCode) {
+			default:
+				var key = keys[event.keyCode];
 
-		if (key) {
-			releaseKey(document.getElementById(key), true, event);
+				if (key) {
+					releaseKey(document.getElementById(key), true, event);
+				}
+
+				break;
 		}
 	});
+});
+
+window.addEventListener('keydown', event => {
+	switch (event.keyCode) {
+		case 16: // Shift
+			shiftKey = true;
+			break;
+		case 17: // Ctrl
+			ctrlKey = true;
+			break;
+		default:
+			break;
+	}
+});
+
+window.addEventListener('keyup', event => {
+	switch (event.keyCode) {
+		case 16: // Shift
+			shiftKey = false;
+			break;
+		case 17: // Ctrl
+			ctrlKey = false;
+			break;
+		default:
+			break;
+	}
 });

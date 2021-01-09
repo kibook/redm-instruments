@@ -1,7 +1,8 @@
 local UiIsOpen = false
 
 local CurrentInstrument
-local ActivePlayingTimer = 0
+local NotesPlaying = 0
+local ActivelyPlayingTimer = 0
 
 RegisterNetEvent('instruments:noteOn')
 RegisterNetEvent('instruments:noteOff')
@@ -218,7 +219,7 @@ function GetListenerInfo()
 end
 
 function GetAnimation()
-	if GetSystemTime() < ActivePlayingTimer then
+	if NotesPlaying > 0 or GetSystemTime() < ActivelyPlayingTimer then
 		return CurrentInstrument.activeAnimation
 	else
 		return CurrentInstrument.inactiveAnimation
@@ -278,7 +279,7 @@ end)
 RegisterNUICallback('noteOn', function(data, cb)
 	TriggerServerEvent('instruments:noteOn', data.channel, data.instrument, data.note, data.octave)
 
-	ActivePlayingTimer = GetSystemTime() + 500
+	NotesPlaying = NotesPlaying + 1
 
 	cb({})
 end)
@@ -286,7 +287,11 @@ end)
 RegisterNUICallback('noteOff', function(data, cb)
 	TriggerServerEvent('instruments:noteOff', data.channel, data.note, data.octave)
 
-	ActivePlayingTimer = GetSystemTime() + 500
+	NotesPlaying = NotesPlaying - 1
+
+	if NotesPlaying == 0 then
+		ActivelyPlayingTimer = GetSystemTime() + 500
+	end
 
 	cb({})
 end)
