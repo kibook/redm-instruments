@@ -341,12 +341,18 @@ AddEventHandler('instruments:noteOff', function(serverId, channel, note, octave)
 		return
 	end
 
-	SendNUIMessage({
-		type = 'noteOff',
-		channel = channel,
-		note = note,
-		octave = octave
-	})
+	local listener, listenerCoords = GetListenerInfo()
+	local soundSource = GetPlayerPed(player)
+	local distance = #(listenerCoords - GetEntityCoords(soundSource))
+
+	if distance <= Config.MaxNoteDistance then
+		SendNUIMessage({
+			type = 'noteOff',
+			channel = channel,
+			note = note,
+			octave = octave
+		})
+	end
 end)
 
 CreateThread(function()
