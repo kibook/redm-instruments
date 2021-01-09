@@ -330,13 +330,24 @@ function sendNote(channel, note, octave, echo) {
 	}
 
 	sendMessage('playNote', {
-		echo: echo,
 		channel: channel,
 		instrument: instrument,
 		note: note,
 		octave: octave,
 		duration: noteDuration
 	});
+
+	if (echo) {
+		playNote({
+			channel: channel,
+			instrument: instrument,
+			note: note,
+			octave: octave,
+			duration: noteDuration,
+			distance: 0,
+			sameRoom: true
+		})
+	}
 }
 
 function activateKey(key, echo) {

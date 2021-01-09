@@ -279,19 +279,6 @@ RegisterNUICallback('playNote', function(data, cb)
 
 	ActivePlayingTimer = GetSystemTime() + data.duration + 500
 
-	if data.echo then
-		SendNUIMessage({
-			type = 'playNote',
-			channel = data.channel,
-			instrument = data.instrument,
-			note = data.note,
-			octave = data.octave,
-			duration = data.duration,
-			distance = 0,
-			sameRoom = true
-		})
-	end
-
 	cb({})
 end)
 
