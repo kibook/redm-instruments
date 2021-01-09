@@ -38,166 +38,157 @@ const keys = {
 
 };
 
-const majorChordKeysPartial = {
-	'key-C1': ['key-C1', 'key-E1', 'key-G1'],
-	'key-Db1': ['key-Db1', 'key-F1', 'key-Ab1'],
-	'key-D1': ['key-D1', 'key-Gb1', 'key-A1'],
-	'key-Eb1': ['key-Eb1', 'key-G1', 'key-Bb1'],
-	'key-E1': ['key-E1', 'key-Ab1', 'key-B1'],
-	'key-F1': ['key-F1', 'key-A1', 'key-C2'],
-	'key-Gb1': ['key-Gb1', 'key-Bb1', 'key-Db2'],
-	'key-G1': ['key-G1', 'key-B1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-C2', 'key-Eb2'],
-	'key-A1': ['key-A1', 'key-Db2', 'key-E2'],
-	'key-Bb1': ['key-Bb1', 'key-D2', 'key-F2'],
-	'key-B1': ['key-B1', 'key-Eb2', 'key-Gb2']
-};
+const majorChordKeys = [
+	{
+		'key-C1': ['key-C1', 'key-E1', 'key-G1'],
+		'key-Db1': ['key-Db1', 'key-F1', 'key-Ab1'],
+		'key-D1': ['key-D1', 'key-Gb1', 'key-A1'],
+		'key-Eb1': ['key-Eb1', 'key-G1', 'key-Bb1'],
+		'key-E1': ['key-E1', 'key-Ab1', 'key-B1'],
+		'key-F1': ['key-F1', 'key-A1', 'key-C2'],
+		'key-Gb1': ['key-Gb1', 'key-Bb1', 'key-Db2'],
+		'key-G1': ['key-G1', 'key-B1', 'key-D2'],
+		'key-Ab1': ['key-Ab1', 'key-C2', 'key-Eb2'],
+		'key-A1': ['key-A1', 'key-Db2', 'key-E2'],
+		'key-Bb1': ['key-Bb1', 'key-D2', 'key-F2'],
+		'key-B1': ['key-B1', 'key-Eb2', 'key-Gb2']
+	},
+	{
+		'key-C2': ['key-C2', 'key-E1', 'key-G1'],
+		'key-Db2': ['key-Db2', 'key-F1', 'key-Ab1'],
+		'key-D2': ['key-D2', 'key-Gb1', 'key-A1'],
+		'key-Eb2': ['key-Eb2', 'key-G1', 'key-Bb1'],
+		'key-E2': ['key-E2', 'key-Ab1', 'key-B1'],
+		'key-F2': ['key-F2', 'key-A1', 'key-C2'],
+		'key-Gb2': ['key-Gb2', 'key-Bb1', 'key-Db2'],
+		'key-G2': ['key-G2', 'key-B1', 'key-D2'],
+		'key-Ab2': ['key-Ab2', 'key-C2', 'key-Eb2'],
+		'key-A2': ['key-A2', 'key-Db2', 'key-E2'],
+		'key-Bb2': ['key-Bb2', 'key-D2', 'key-F2'],
+		'key-B2': ['key-B2', 'key-Eb2', 'key-Gb2']
+	},
+	{
+		'key-C3': ['key-C3', 'key-E3', 'key-G2'],
+		'key-Db3': ['key-Db3', 'key-F3', 'key-Ab2'],
+		'key-D3': ['key-D3', 'key-Gb3', 'key-A2'],
+		'key-Eb3': ['key-Eb3', 'key-G3', 'key-Bb2'],
+		'key-E3': ['key-E3', 'key-Ab3', 'key-B2'],
+		'key-F3': ['key-F3', 'key-A3', 'key-C3'],
+		'key-Gb3': ['key-Gb3', 'key-Bb3', 'key-Db3'],
+		'key-G3': ['key-G3', 'key-B3', 'key-D3'],
+		'key-Ab3': ['key-Ab3', 'key-C3', 'key-Eb3'],
+		'key-A3': ['key-A3', 'key-Db3', 'key-E3'],
+		'key-Bb3': ['key-Bb3', 'key-D3', 'key-F3'],
+		'key-B3': ['key-B3', 'key-Eb3', 'key-Gb3']
+	}
+];
 
-const majorChordKeysFull = {
-	'key-C1': ['key-C1', 'key-E1', 'key-G1'],
-	'key-Db1': ['key-Db1', 'key-F1', 'key-Ab1'],
-	'key-D1': ['key-D1', 'key-Gb1', 'key-A1'],
-	'key-Eb1': ['key-Eb1', 'key-G1', 'key-Bb1'],
-	'key-E1': ['key-E1', 'key-Ab1', 'key-B1'],
-	'key-F1': ['key-F1', 'key-A1', 'key-C2'],
-	'key-Gb1': ['key-Gb1', 'key-Bb1', 'key-Db2'],
-	'key-G1': ['key-G1', 'key-B1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-C2', 'key-Eb2'],
-	'key-A1': ['key-A1', 'key-Db2', 'key-E2'],
-	'key-Bb1': ['key-Bb1', 'key-D2', 'key-F2'],
-	'key-B1': ['key-B1', 'key-Eb2', 'key-Gb2'],
-	'key-C2': ['key-C2', 'key-E1', 'key-G1'],
-	'key-Db2': ['key-Db2', 'key-F1', 'key-Ab1'],
-	'key-D2': ['key-D2', 'key-Gb1', 'key-A1'],
-	'key-Eb2': ['key-Eb2', 'key-G1', 'key-Bb1'],
-	'key-E2': ['key-E2', 'key-Ab1', 'key-B1'],
-	'key-F2': ['key-F2', 'key-A1', 'key-C2'],
-	'key-Gb2': ['key-Gb2', 'key-Bb1', 'key-Db2'],
-	'key-G2': ['key-G2', 'key-B1', 'key-D2'],
-	'key-Ab2': ['key-Ab2', 'key-C2', 'key-Eb2'],
-	'key-A2': ['key-A2', 'key-Db2', 'key-E2'],
-	'key-Bb2': ['key-Bb2', 'key-D2', 'key-F2'],
-	'key-B2': ['key-B2', 'key-Eb2', 'key-Gb2'],
-	'key-C3': ['key-C3', 'key-E3', 'key-G2'],
-	'key-Db3': ['key-Db3', 'key-F3', 'key-Ab2'],
-	'key-D3': ['key-D3', 'key-Gb3', 'key-A2'],
-	'key-Eb3': ['key-Eb3', 'key-G3', 'key-Bb2'],
-	'key-E3': ['key-E3', 'key-Ab3', 'key-B2'],
-	'key-F3': ['key-F3', 'key-A3', 'key-C3'],
-	'key-Gb3': ['key-Gb3', 'key-Bb3', 'key-Db3'],
-	'key-G3': ['key-G3', 'key-B3', 'key-D3'],
-	'key-Ab3': ['key-Ab3', 'key-C3', 'key-Eb3'],
-	'key-A3': ['key-A3', 'key-Db3', 'key-E3'],
-	'key-Bb3': ['key-Bb3', 'key-D3', 'key-F3'],
-	'key-B3': ['key-B3', 'key-Eb3', 'key-Gb3']
-};
+const minorChordKeys = [
+	{
+		'key-C1': ['key-C1', 'key-Eb1', 'key-G1'],
+		'key-Db1': ['key-Db1', 'key-E1', 'key-Ab1'],
+		'key-D1': ['key-D1', 'key-F1', 'key-A1'],
+		'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-Bb1'],
+		'key-E1': ['key-E1', 'key-G1', 'key-B1'],
+		'key-F1': ['key-F1', 'key-Ab1', 'key-C2'],
+		'key-Gb1': ['key-Gb1', 'key-A1', 'key-Db2'],
+		'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
+		'key-Ab1': ['key-Ab1', 'key-B1', 'key-Eb2'],
+		'key-A1': ['key-A1', 'key-C2', 'key-E2'],
+		'key-Bb1': ['key-Bb1', 'key-Db2', 'key-F2'],
+		'key-B1': ['key-B1', 'key-D2', 'key-Gb2']
+	},
+	{
+		'key-C2': ['key-C2', 'key-Eb1', 'key-G1'],
+		'key-Db2': ['key-Db2', 'key-E1', 'key-Ab1'],
+		'key-D2': ['key-D2', 'key-F1', 'key-A1'],
+		'key-Eb2': ['key-Eb2', 'key-Gb1', 'key-Bb1'],
+		'key-E2': ['key-E2', 'key-G1', 'key-B1'],
+		'key-F2': ['key-F2', 'key-Ab1', 'key-C2'],
+		'key-Gb2': ['key-Gb2', 'key-A1', 'key-Db2'],
+		'key-G2': ['key-G2', 'key-Bb1', 'key-D2'],
+		'key-Ab2': ['key-Ab2', 'key-B1', 'key-Eb2'],
+		'key-A2': ['key-A2', 'key-C2', 'key-E2'],
+		'key-Bb2': ['key-Bb2', 'key-Db2', 'key-F2'],
+		'key-B2': ['key-B2', 'key-D2', 'key-Gb2']
+	},
+	{
+		'key-C3': ['key-C3', 'key-Eb3', 'key-G2'],
+		'key-Db3': ['key-Db3', 'key-E3', 'key-Ab2'],
+		'key-D3': ['key-D3', 'key-F3', 'key-A2'],
+		'key-Eb3': ['key-Eb3', 'key-Gb3', 'key-Bb2'],
+		'key-E3': ['key-E3', 'key-G3', 'key-B2'],
+		'key-F3': ['key-F3', 'key-Ab3', 'key-C3'],
+		'key-Gb3': ['key-Gb3', 'key-A3', 'key-Db3'],
+		'key-G3': ['key-G3', 'key-Bb3', 'key-D3'],
+		'key-Ab3': ['key-Ab3', 'key-B3', 'key-Eb3'],
+		'key-A3': ['key-A3', 'key-C3', 'key-E3'],
+		'key-Bb3': ['key-Bb3', 'key-Db3', 'key-F3'],
+		'key-B3': ['key-B3', 'key-D3', 'key-Gb3']
+	}
+];
 
-const minorChordKeysPartial = {
-	'key-C1': ['key-C1', 'key-Eb1', 'key-G1'],
-	'key-Db1': ['key-Db1', 'key-E1', 'key-Ab1'],
-	'key-D1': ['key-D1', 'key-F1', 'key-A1'],
-	'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-Bb1'],
-	'key-E1': ['key-E1', 'key-G1', 'key-B1'],
-	'key-F1': ['key-F1', 'key-Ab1', 'key-C2'],
-	'key-Gb1': ['key-Gb1', 'key-A1', 'key-Db2'],
-	'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-B1', 'key-Eb2'],
-	'key-A1': ['key-A1', 'key-C2', 'key-E2'],
-	'key-Bb1': ['key-Bb1', 'key-Db2', 'key-F2'],
-	'key-B1': ['key-B1', 'key-D2', 'key-Gb2']
-};
+const diminishedChordKeys = [
+	{
+		'key-C1': ['key-C1', 'key-Eb1', 'key-Gb1'],
+		'key-Db1': ['key-Db1', 'key-E1', 'key-G1'],
+		'key-D1': ['key-D1', 'key-F1', 'key-Ab1'],
+		'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-A1'],
+		'key-E1': ['key-E1', 'key-G1', 'key-Bb1'],
+		'key-F1': ['key-F1', 'key-Ab1', 'key-B1'],
+		'key-Gb1': ['key-Gb1', 'key-A1', 'key-C2'],
+		'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
+		'key-Ab1': ['key-Ab1', 'key-B1', 'key-D2'],
+		'key-A1': ['key-A1', 'key-C2', 'key-Eb2'],
+		'key-Bb1': ['key-Bb1', 'key-Db2', 'key-E2'],
+		'key-B1': ['key-B1', 'key-D2', 'key-F2']
+	},
+	{
+		'key-C2': ['key-C2', 'key-Eb1', 'key-Gb1'],
+		'key-Db2': ['key-Db2', 'key-E1', 'key-G1'],
+		'key-D2': ['key-D2', 'key-F1', 'key-Ab1'],
+		'key-Eb2': ['key-Eb2', 'key-Gb1', 'key-A1'],
+		'key-E2': ['key-E2', 'key-G1', 'key-Bb1'],
+		'key-F2': ['key-F2', 'key-Ab1', 'key-B1'],
+		'key-Gb2': ['key-Gb2', 'key-A1', 'key-C2'],
+		'key-G2': ['key-G2', 'key-Bb1', 'key-D2'],
+		'key-Ab2': ['key-Ab2', 'key-B1', 'key-D2'],
+		'key-A2': ['key-A2', 'key-C2', 'key-Eb2'],
+		'key-Bb2': ['key-Bb2', 'key-Db2', 'key-E2'],
+		'key-B2': ['key-B2', 'key-D2', 'key-F2']
+	},
+	{
+		'key-C3': ['key-C3', 'key-Eb3', 'key-Gb2'],
+		'key-Db3': ['key-Db3', 'key-E3', 'key-G2'],
+		'key-D3': ['key-D3', 'key-F3', 'key-Ab2'],
+		'key-Eb3': ['key-Eb3', 'key-Gb3', 'key-A2'],
+		'key-E3': ['key-E3', 'key-G3', 'key-Bb2'],
+		'key-F3': ['key-F3', 'key-Ab3', 'key-B2'],
+		'key-Gb3': ['key-Gb3', 'key-A3', 'key-C3'],
+		'key-G3': ['key-G3', 'key-Bb3', 'key-D3'],
+		'key-Ab3': ['key-Ab3', 'key-B3', 'key-D3'],
+		'key-A3': ['key-A3', 'key-C3', 'key-Eb3'],
+		'key-Bb3': ['key-Bb3', 'key-Db3', 'key-E3'],
+		'key-B3': ['key-B3', 'key-D3', 'key-F3']
+	}
+];
 
-const minorChordKeysFull = {
-	'key-C1': ['key-C1', 'key-Eb1', 'key-G1'],
-	'key-Db1': ['key-Db1', 'key-E1', 'key-Ab1'],
-	'key-D1': ['key-D1', 'key-F1', 'key-A1'],
-	'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-Bb1'],
-	'key-E1': ['key-E1', 'key-G1', 'key-B1'],
-	'key-F1': ['key-F1', 'key-Ab1', 'key-C2'],
-	'key-Gb1': ['key-Gb1', 'key-A1', 'key-Db2'],
-	'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-B1', 'key-Eb2'],
-	'key-A1': ['key-A1', 'key-C2', 'key-E2'],
-	'key-Bb1': ['key-Bb1', 'key-Db2', 'key-F2'],
-	'key-B1': ['key-B1', 'key-D2', 'key-Gb2'],
-	'key-C2': ['key-C2', 'key-Eb1', 'key-G1'],
-	'key-Db2': ['key-Db2', 'key-E1', 'key-Ab1'],
-	'key-D2': ['key-D2', 'key-F1', 'key-A1'],
-	'key-Eb2': ['key-Eb2', 'key-Gb1', 'key-Bb1'],
-	'key-E2': ['key-E2', 'key-G1', 'key-B1'],
-	'key-F2': ['key-F2', 'key-Ab1', 'key-C2'],
-	'key-Gb2': ['key-Gb2', 'key-A1', 'key-Db2'],
-	'key-G2': ['key-G2', 'key-Bb1', 'key-D2'],
-	'key-Ab2': ['key-Ab2', 'key-B1', 'key-Eb2'],
-	'key-A2': ['key-A2', 'key-C2', 'key-E2'],
-	'key-Bb2': ['key-Bb2', 'key-Db2', 'key-F2'],
-	'key-B2': ['key-B2', 'key-D2', 'key-Gb2'],
-	'key-C3': ['key-C3', 'key-Eb3', 'key-G2'],
-	'key-Db3': ['key-Db3', 'key-E3', 'key-Ab2'],
-	'key-D3': ['key-D3', 'key-F3', 'key-A2'],
-	'key-Eb3': ['key-Eb3', 'key-Gb3', 'key-Bb2'],
-	'key-E3': ['key-E3', 'key-G3', 'key-B2'],
-	'key-F3': ['key-F3', 'key-Ab3', 'key-C3'],
-	'key-Gb3': ['key-Gb3', 'key-A3', 'key-Db3'],
-	'key-G3': ['key-G3', 'key-Bb3', 'key-D3'],
-	'key-Ab3': ['key-Ab3', 'key-B3', 'key-Eb3'],
-	'key-A3': ['key-A3', 'key-C3', 'key-E3'],
-	'key-Bb3': ['key-Bb3', 'key-Db3', 'key-F3'],
-	'key-B3': ['key-B3', 'key-D3', 'key-Gb3']
-};
-
-const diminishedChordKeysPartial = {
-	'key-C1': ['key-C1', 'key-Eb1', 'key-Gb1'],
-	'key-Db1': ['key-Db1', 'key-E1', 'key-G1'],
-	'key-D1': ['key-D1', 'key-F1', 'key-Ab1'],
-	'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-A1'],
-	'key-E1': ['key-E1', 'key-G1', 'key-Bb1'],
-	'key-F1': ['key-F1', 'key-Ab1', 'key-B1'],
-	'key-Gb1': ['key-Gb1', 'key-A1', 'key-C2'],
-	'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-B1', 'key-D2'],
-	'key-A1': ['key-A1', 'key-C2', 'key-Eb2'],
-	'key-Bb1': ['key-Bb1', 'key-Db2', 'key-E2'],
-	'key-B1': ['key-B1', 'key-D2', 'key-F2']
-};
-
-const diminishedChordKeysFull = {
-	'key-C1': ['key-C1', 'key-Eb1', 'key-Gb1'],
-	'key-Db1': ['key-Db1', 'key-E1', 'key-G1'],
-	'key-D1': ['key-D1', 'key-F1', 'key-Ab1'],
-	'key-Eb1': ['key-Eb1', 'key-Gb1', 'key-A1'],
-	'key-E1': ['key-E1', 'key-G1', 'key-Bb1'],
-	'key-F1': ['key-F1', 'key-Ab1', 'key-B1'],
-	'key-Gb1': ['key-Gb1', 'key-A1', 'key-C2'],
-	'key-G1': ['key-G1', 'key-Bb1', 'key-D2'],
-	'key-Ab1': ['key-Ab1', 'key-B1', 'key-D2'],
-	'key-A1': ['key-A1', 'key-C2', 'key-Eb2'],
-	'key-Bb1': ['key-Bb1', 'key-Db2', 'key-E2'],
-	'key-B1': ['key-B1', 'key-D2', 'key-F2'],
-	'key-C2': ['key-C2', 'key-Eb1', 'key-Gb1'],
-	'key-Db2': ['key-Db2', 'key-E1', 'key-G1'],
-	'key-D2': ['key-D2', 'key-F1', 'key-Ab1'],
-	'key-Eb2': ['key-Eb2', 'key-Gb1', 'key-A1'],
-	'key-E2': ['key-E2', 'key-G1', 'key-Bb1'],
-	'key-F2': ['key-F2', 'key-Ab1', 'key-B1'],
-	'key-Gb2': ['key-Gb2', 'key-A1', 'key-C2'],
-	'key-G2': ['key-G2', 'key-Bb1', 'key-D2'],
-	'key-Ab2': ['key-Ab2', 'key-B1', 'key-D2'],
-	'key-A2': ['key-A2', 'key-C2', 'key-Eb2'],
-	'key-Bb2': ['key-Bb2', 'key-Db2', 'key-E2'],
-	'key-B2': ['key-B2', 'key-D2', 'key-F2'],
-	'key-C3': ['key-C3', 'key-Eb3', 'key-Gb2'],
-	'key-Db3': ['key-Db3', 'key-E3', 'key-G2'],
-	'key-D3': ['key-D3', 'key-F3', 'key-Ab2'],
-	'key-Eb3': ['key-Eb3', 'key-Gb3', 'key-A2'],
-	'key-E3': ['key-E3', 'key-G3', 'key-Bb2'],
-	'key-F3': ['key-F3', 'key-Ab3', 'key-B2'],
-	'key-Gb3': ['key-Gb3', 'key-A3', 'key-C3'],
-	'key-G3': ['key-G3', 'key-Bb3', 'key-D3'],
-	'key-Ab3': ['key-Ab3', 'key-B3', 'key-D3'],
-	'key-A3': ['key-A3', 'key-C3', 'key-Eb3'],
-	'key-Bb3': ['key-Bb3', 'key-Db3', 'key-E3'],
-	'key-B3': ['key-B3', 'key-D3', 'key-F3']
+const chordKeys = {
+	major: {
+		off: {},
+		partial: majorChordKeys[0],
+		full: Object.assign({}, majorChordKeys[0], majorChordKeys[1], majorChordKeys[2])
+	},
+	minor: {
+		off: {},
+		partial: minorChordKeys[0],
+		full: Object.assign({}, minorChordKeys[0], minorChordKeys[1], minorChordKeys[2])
+	},
+	diminished: {
+		off: {},
+		partial: diminishedChordKeys[0],
+		full: Object.assign(diminishedChordKeys[0], diminishedChordKeys[1], diminishedChordKeys[2])
+	}
 };
 
 const notes = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
@@ -222,7 +213,7 @@ var midiChannel = 0;
 
 var channels = {};
 
-var chordMode = 0;
+var chordMode = 'off';
 
 var activatedKeys = {};
 
@@ -545,20 +536,16 @@ function playMidi(url) {
 
 function getChordKeys(event) {
 	if (shiftKey) {
-		return chordMode == 1 ? minorChordKeysPartial : minorChordKeysFull;
+		return chordKeys['minor'][chordMode];
 	} else if (ctrlKey) {
-		return chordMode == 1 ? diminishedChordKeysPartial : diminishedChordKeysFull;
+		return chordKeys['diminshed'][chordmode];
 	} else {
-		return chordMode == 1 ? majorChordKeysPartial : majorChordKeysFull;
+		return chordKeys['major'][chordMode];
 	}
 }
 
 function pressKey(key, event) {
-	var keys;
-
-	if (chordMode > 0) {
-		keys = getChordKeys(event)[key.id];
-	}
+	var keys = getChordKeys(event)[key.id];
 
 	if (keys) {
 		keys.forEach(key => activateKey(document.getElementById(key), true));
@@ -568,11 +555,7 @@ function pressKey(key, event) {
 }
 
 function releaseKey(key, event) {
-	var keys;
-
-	if (chordMode > 0) {
-		keys = getChordKeys(event)[key.id];
-	}
+	var keys = getChordKeys(event)[key.id];
 
 	if (keys) {
 		keys.forEach(key => deactivateKey(document.getElementById(key), true));
@@ -582,21 +565,19 @@ function releaseKey(key, event) {
 }
 
 function cycleChordMode() {
-	chordMode = (chordMode + 1) % 3;
-
 	switch (chordMode) {
-		case 0:
-			document.getElementById('chords').value = 'off';
+		case 'off':
+			chordMode = 'partial';
 			break;
-		case 1:
-			document.getElementById('chords').value = 'partial';
+		case 'partial':
+			chordMode = 'full';
 			break;
-		case 2:
-			document.getElementById('chords').value = 'full';
-			break;
-		default:
+		case 'full':
+			chordMode = 'off';
 			break;
 	}
+
+	document.getElementById('chords').value = chordMode;
 }
 
 window.addEventListener('message', event => {
@@ -704,19 +685,7 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('chords').addEventListener('input', function(event) {
-		switch (this.value) {
-			case 'off':
-				chordMode = 0;
-				break;
-			case 'partial':
-				chordMode = 1;
-				break;
-			case 'full':
-				chordMode = 2;
-				break;
-			default:
-				break;
-		}
+		chordMode = this.value;
 		document.getElementById('keyboard').focus();
 	});
 
