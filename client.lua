@@ -123,25 +123,6 @@ function StartPlayingInstrument(instrument)
 		return
 	end
 
-	if CurrentInstrument.prop then
-		local model = CurrentInstrument.prop.model
-		local bone = CurrentInstrument.prop.bone
-		local x = CurrentInstrument.prop.x
-		local y = CurrentInstrument.prop.y
-		local z = CurrentInstrument.prop.z
-		local pitch = CurrentInstrument.prop.pitch
-		local roll = CurrentInstrument.prop.roll
-		local yaw = CurrentInstrument.prop.yaw
-
-		if type(bone) == 'string' then
-			bone = GetEntityBoneIndexByName(ped, bone)
-		end
-
-		local obj = CreateObjectNoOffset(GetHashKey(model), 0.0, 0.0, 0.0, true, false, false, false)
-		AttachEntityToEntity(obj, ped, bone, x, y, z, pitch, roll, yaw, false, false, true, false, 0, true, false, false)
-		CurrentInstrument.prop.handle = obj
-	end
-
 	ActivelyPlayingTimer = 0
 end
 
@@ -511,6 +492,29 @@ AddEventHandler('instruments:noteOff', function(serverId, channel, note, octave)
 	end
 end)
 
+function CreateInstrumentObject()
+	local model = CurrentInstrument.prop.model
+
+	CurrentInstrument.prop.handle = CreateObjectNoOffset(GetHashKey(model), 0.0, 0.0, 0.0, true, false, false, false)
+end
+
+function AttachInstrumentObject(ped)
+	local handle = CurrentInstrument.prop.handle
+	local bone = CurrentInstrument.prop.bone
+	local x = CurrentInstrument.prop.x
+	local y = CurrentInstrument.prop.y
+	local z = CurrentInstrument.prop.z
+	local pitch = CurrentInstrument.prop.pitch
+	local roll = CurrentInstrument.prop.roll
+	local yaw = CurrentInstrument.prop.yaw
+
+	if type(bone) == 'string' then
+		bone = GetEntityBoneIndexByName(ped, bone)
+	end
+
+	AttachEntityToEntity(handle, ped, bone, x, y, z, pitch, roll, yaw, false, false, true, false, 0, true, false, false)
+end
+
 CreateThread(function()
 	TriggerEvent('chat:addSuggestion', '/instrument', 'Play an instrument', {
 		{name = 'instrument', help = table.concat(GetInstrumentList(), ', ') .. ', quit'}
@@ -525,6 +529,15 @@ CreateThread(function()
 
 			if not IsEntityPlayingAnim(ped, anim.dict, anim.name, anim.flag) then
 				PlayAnimation(ped, anim)
+			end
+
+			if CurrentInstrument.prop then
+				if not (CurrentInstrument.prop.handle and DoesEntityExist(CurrentInstrument.prop.handle)) then
+					CreateInstrumentObject()
+					AttachInstrumentObject(ped)
+				elseif not IsEntityAttachedToEntity(CurrentInstrument.prop.handle, ped) then
+					AttachInstrumentObject(ped)
+				end
 			end
 		end
 	end
