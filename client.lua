@@ -4,6 +4,15 @@ local CurrentInstrument
 local NotesPlaying = 0
 local ActivelyPlayingTimer = 0
 
+local Recording = {
+	active = false,
+	startTime = 0,
+	length = 0,
+	events = {},
+	buffer = {},
+	playing = false
+}
+
 RegisterNetEvent('instruments:noteOn')
 RegisterNetEvent('instruments:noteOff')
 
@@ -249,6 +258,137 @@ function GetInstrumentList()
 	return instruments
 end
 
+function NoteOn(channel, instrument, note, octave)
+	TriggerServerEvent('instruments:noteOn', channel, instrument, note, octave)
+
+	NotesPlaying = NotesPlaying + 1
+
+	if Recording.active then
+		RecordNoteOn(channel, instrument, note, octave)
+	end
+end
+
+function NoteOff(channel, note, octave)
+	TriggerServerEvent('instruments:noteOff', channel, note, octave)
+
+	NotesPlaying = NotesPlaying - 1
+
+	if NotesPlaying == 0 then
+		ActivelyPlayingTimer = GetSystemTime() + 500
+	end
+
+	if Recording.active then
+		RecordNoteOff(channel, note, octave)
+	end
+end
+
+function StartRecording()
+	Recording.buffer = {}
+	Recording.length = 0
+	Recording.startTime = GetSystemTime()
+	Recording.active = true
+
+	PlaybackRecording()
+end
+
+function StopRecording()
+	Recording.active = false
+	Recording.length = GetSystemTime() - Recording.startTime
+
+	Recording.events = {}
+	for _, event in ipairs(Recording.buffer) do
+		table.insert(Recording.events, event)
+	end
+
+	Recording.playing = false
+end
+
+function RecordWait(duration)
+	table.insert(Recording.buffer, {
+		type = 'wait',
+		duration = duration
+	})
+end
+
+function RecordNoteOn(channel, instrument, note, octave)
+	local lastEvent = Recording.buffer[#Recording.buffer]
+
+	if lastEvent then
+		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
+	end
+
+	table.insert(Recording.buffer, {
+		type = 'noteOn',
+		time = GetSystemTime() - Recording.startTime,
+		channel = channel,
+		instrument = instrument,
+		note = note,
+		octave = octave
+	})
+end
+
+function RecordNoteOff(channel, note, octave)
+	local lastEvent = Recording.buffer[#Recording.buffer]
+
+	if lastEvent then
+		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
+	end
+
+	table.insert(Recording.buffer, {
+		type = 'noteOff',
+		time = GetSystemTime() - Recording.startTime,
+		channel = channel,
+		note = note,
+		octave = octave
+	})
+end
+
+function PlaybackRecording()
+	CreateThread(function()
+		Recording.playing = true
+
+		for _, event in ipairs(Recording.events) do
+			if not Recording.playing then
+				break
+			end
+
+			if event.type == 'noteOn' then
+				NoteOn(event.channel, event.instrument, event.note, event.octave)
+
+				SendNUIMessage({
+					type = 'noteOn',
+					channel = event.channel,
+					instrument = event.instrument,
+					note = event.note,
+					octave = event.octave,
+					distance = 0,
+					sameRoom = true
+				})
+			elseif event.type == 'noteOff' then
+				NoteOff(event.channel, event.note, event.octave)
+
+				SendNUIMessage({
+					type = 'noteOff',
+					channel = event.channel,
+					note = event.note,
+					octave = event.octave
+				})
+			elseif event.type == 'wait' then
+				Wait(event.duration)
+			end
+		end
+	end)
+end
+
+function EraseRecording()
+	Recording.active = false
+	Recording.startTime = 0
+	Recording.length = 0
+	Recording.events = {}
+	Recording.buffer = {}
+	Recording.playing = false
+end
+
 RegisterCommand('instrument', function(source, args, raw)
 	if args[1] == 'quit' then
 		StopPlayingInstrument()
@@ -275,27 +415,39 @@ RegisterNUICallback('init', function(data, cb)
 end)
 
 RegisterNUICallback('noteOn', function(data, cb)
-	TriggerServerEvent('instruments:noteOn', data.channel, data.instrument, data.note, data.octave)
-
-	NotesPlaying = NotesPlaying + 1
-
+	NoteOn(data.channel, data.instrument, data.note, data.octave)
 	cb({})
 end)
 
 RegisterNUICallback('noteOff', function(data, cb)
-	TriggerServerEvent('instruments:noteOff', data.channel, data.note, data.octave)
-
-	NotesPlaying = NotesPlaying - 1
-
-	if NotesPlaying == 0 then
-		ActivelyPlayingTimer = GetSystemTime() + 500
-	end
-
+	NoteOff(data.channel, data.note, data.octave)
 	cb({})
 end)
 
 RegisterNUICallback('closeUi', function(data, cb)
 	HideUi()
+	cb({})
+end)
+
+RegisterNUICallback('startRecording', function(data, cb)
+	StartRecording()
+	cb({})
+end)
+
+RegisterNUICallback('stopRecording', function(data, cb)
+	StopRecording()
+	cb({
+		length = Recording.length
+	})
+end)
+
+RegisterNUICallback('playbackRecording', function(data, cb)
+	PlaybackRecording()
+	cb({})
+end)
+
+RegisterNUICallback('eraseRecording', function(data, cb)
+	EraseRecording()
 	cb({})
 end)
 

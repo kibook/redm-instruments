@@ -220,6 +220,10 @@ var activatedKeys = {};
 var shiftKey = false;
 var ctrlKey = false;
 
+var recording = false;
+var recordingPlayback = false;
+var recordingLength = 0;
+
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
 		method: 'POST',
@@ -580,6 +584,67 @@ function cycleChordMode() {
 	document.getElementById('chords').value = chordMode;
 }
 
+function updateRecordingTime() {
+	if (recording) {
+		document.getElementById('time').innerHTML = '00:00:00/' + timeToString(Date.now() - recording);
+
+		setTimeout(updateRecordingTime, 1000);
+	}
+}
+
+function updateRecordingPlaybackTime() {
+	if (recordingPlayback) {
+		var time = Date.now() - recordingPlayback;
+
+		if (time <= recordingLength) {
+			document.getElementById('time').innerHTML = timeToString(time) + '/' + timeToString(recordingLength);
+			setTimeout(updateRecordingPlaybackTime, 1000);
+		}
+	}
+}
+
+function startRecording() {
+	sendMessage('startRecording', {}).then(() => {
+		recording = Date.now();
+		document.getElementById('record').style.color = 'red';
+		updateRecordingTime();
+	});
+}
+
+function stopRecording() {
+	sendMessage('stopRecording').then(resp => resp.json()).then(data => {
+		recordingLength = data.length;
+
+		document.getElementById('time').innerHTML = '00:00:00/' + timeToString(recordingLength);
+		document.getElementById('record').style.color = null;
+
+		recording = false;
+	});
+}
+
+function eraseRecording() {
+	sendMessage('eraseRecording', {}).then(() => {
+		document.getElementById('time').innerHTML = '00:00:00/00:00:00';
+		recording = false;
+		recordingPlayback = false;
+		recordingLength = 0;
+	});
+}
+
+function startRecordingPlayback() {
+	sendMessage('playbackRecording');
+
+	recordingPlayback = Date.now();
+	updateRecordingPlaybackTime();
+}
+
+function stopRecordingPlayback() {
+	sendMessage('stopRecording', {}).then(() => {
+		recordingPlayback = false;
+		document.getElementById('time').innerHTML = '00:00:00/' + timeToString(recordingLength);
+	});
+}
+
 window.addEventListener('message', event => {
 	switch (event.data.type) {
 		case 'showUi':
@@ -675,18 +740,45 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('play').addEventListener('click', function(event) {
-		playMidi(document.getElementById('url').value);
+		var url = document.getElementById('url').value;
+
+		if (url == '') {
+			startRecordingPlayback();
+		} else {
+			playMidi(url);
+		}
+
 		document.getElementById('keyboard').focus();
 	});
 
 	document.getElementById('stop').addEventListener('click', function(event) {
-		MIDI.Player.stop();
+		if (MIDI.Player.playing) {
+			MIDI.Player.stop();
+		} else if (recording) {
+			stopRecording();
+		} else {
+			stopRecordingPlayback();
+		}
+
 		document.getElementById('keyboard').focus();
 	});
 
 	document.getElementById('chords').addEventListener('input', function(event) {
 		chordMode = this.value;
 		document.getElementById('keyboard').focus();
+	});
+
+	document.getElementById('record').addEventListener('click', function(event) {
+		if (recording) {
+			stopRecording();
+		} else {
+			startRecording();
+		}
+		document.getElementById('keyboard').focus();
+	});
+
+	document.getElementById('erase').addEventListener('click', function(event) {
+		eraseRecording();
 	});
 
 	document.getElementById('keyboard').addEventListener('keydown', event => {
