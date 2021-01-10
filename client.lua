@@ -131,21 +131,22 @@ function StopPlayingInstrument()
 		return
 	end
 
+	local instrument = CurrentInstrument
+	CurrentInstrument = nil
+
 	local ped = PlayerPedId()
 
-	if CurrentInstrument.attachTo then
+	if instrument.attachTo then
 		DetachFromInstrument(ped)
 	end
 
-	if CurrentInstrument.prop and CurrentInstrument.prop.handle then
-		DeleteObject(CurrentInstrument.prop.handle)
+	if instrument.prop and instrument.prop.handle then
+		DeleteObject(instrument.prop.handle)
 	end
 
-	local anim = GetAnimation()
+	local anim = GetAnimation(ped, instrument)
 
 	StopAnimTask(ped, anim.dict, anim.name)
-
-	CurrentInstrument = nil
 end
 
 function ShowUi()
@@ -209,11 +210,23 @@ function GetListenerInfo()
 	return ped, listenerCoords
 end
 
-function GetAnimation()
+function GetAnimation(ped, instrument)
+	local anim
+
 	if NotesPlaying > 0 or GetSystemTime() < ActivelyPlayingTimer then
-		return CurrentInstrument.activeAnimation
+		anim = instrument.activeAnimation
 	else
-		return CurrentInstrument.inactiveAnimation
+		anim = instrument.inactiveAnimation
+	end
+
+	local isMale = IsPedMale(ped)
+
+	if anim.female and not isMale then
+		return anim.female
+	elseif anim.male and isMale then
+		return anim.male
+	else
+		return anim
 	end
 end
 
@@ -525,7 +538,7 @@ CreateThread(function()
 
 		if CurrentInstrument then
 			local ped = PlayerPedId()
-			local anim = GetAnimation()
+			local anim = GetAnimation(ped, CurrentInstrument)
 
 			if not IsEntityPlayingAnim(ped, anim.dict, anim.name, anim.flag) then
 				PlayAnimation(ped, anim)

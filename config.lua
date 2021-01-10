@@ -147,14 +147,28 @@ Config.Instruments = {
 			yaw = 0.0
 		},
 		inactiveAnimation = {
-			dict = 'amb_misc@prop_human_seat_bench@harmonica@resting@male_a@base',
-			name = 'base',
-			flag = 25
+			female = {
+				dict = 'amb_misc@prop_human_seat_bench@harmonica@resting@female_a@base',
+				name = 'base',
+				flag = 25
+			},
+			male = {
+				dict = 'amb_misc@prop_human_seat_bench@harmonica@resting@male_a@base',
+				name = 'base',
+				flag = 25
+			},
 		},
 		activeAnimation = {
-			dict = 'ai_gestures@instruments@harmonica@seated@120bpm',
-			name = 'spine_bwd_01',
-			flag = 25
+			female = {
+				dict = 'ai_gestures@instruments@harmonica@seated@female@120bpm',
+				name = 'spine_bwd_01',
+				flag = 25
+			},
+			male = {
+				dict = 'ai_gestures@instruments@harmonica@seated@120bpm',
+				name = 'spine_bwd_01',
+				flag = 25
+			}
 		}
 	}
 }
