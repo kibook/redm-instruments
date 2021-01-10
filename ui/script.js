@@ -545,7 +545,7 @@ function getChordKeys(event) {
 	if (shiftKey) {
 		return chordKeys['minor'][chordMode];
 	} else if (ctrlKey) {
-		return chordKeys['diminshed'][chordmode];
+		return chordKeys['diminished'][chordMode];
 	} else {
 		return chordKeys['major'][chordMode];
 	}
