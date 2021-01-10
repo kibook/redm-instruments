@@ -141,6 +141,8 @@ function StartPlayingInstrument(instrument)
 		AttachEntityToEntity(obj, ped, bone, x, y, z, pitch, roll, yaw, false, false, true, false, 0, true, false, false)
 		CurrentInstrument.prop.handle = obj
 	end
+
+	ActivelyPlayingTimer = 0
 end
 
 function StopPlayingInstrument()
