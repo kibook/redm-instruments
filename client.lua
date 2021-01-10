@@ -264,6 +264,10 @@ function NoteOn(channel, instrument, note, octave)
 	NotesPlaying = NotesPlaying + 1
 
 	if Recording.active then
+		if not Recording.playing then
+			PlaybackRecording()
+		end
+
 		RecordNoteOn(channel, instrument, note, octave)
 	end
 end
@@ -287,8 +291,6 @@ function StartRecording()
 	Recording.length = 0
 	Recording.startTime = GetSystemTime()
 	Recording.active = true
-
-	PlaybackRecording()
 end
 
 function StopRecording()

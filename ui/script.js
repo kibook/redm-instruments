@@ -602,6 +602,8 @@ function updateRecordingPlaybackTime() {
 		if (time <= recordingLength) {
 			document.getElementById('time').innerHTML = timeToString(time) + '/' + timeToString(recordingLength);
 			setTimeout(updateRecordingPlaybackTime, 1000);
+		} else {
+			stopRecordingPlayback();
 		}
 	}
 }
@@ -622,6 +624,7 @@ function stopRecording() {
 		document.getElementById('record').style.color = null;
 
 		recording = false;
+		recordingPlayback = false;
 	});
 }
 
@@ -636,10 +639,17 @@ function eraseRecording() {
 }
 
 function startRecordingPlayback() {
+	if (recordingPlayback) {
+		return;
+	}
+
 	sendMessage('playbackRecording');
 
 	recordingPlayback = Date.now();
-	updateRecordingPlaybackTime();
+
+	if (!recording) {
+		updateRecordingPlaybackTime();
+	}
 }
 
 function stopRecordingPlayback() {
@@ -664,6 +674,16 @@ function toggleRecording() {
 		stopRecording();
 	} else {
 		startRecording();
+	}
+}
+
+function play() {
+	var url = document.getElementById('url').value;
+
+	if (url == '') {
+		startRecordingPlayback();
+	} else {
+		playMidi(url);
 	}
 }
 
@@ -765,14 +785,7 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('play').addEventListener('click', function(event) {
-		var url = document.getElementById('url').value;
-
-		if (url == '') {
-			startRecordingPlayback();
-		} else {
-			playMidi(url);
-		}
-
+		play();
 		document.getElementById('keyboard').focus();
 	});
 
@@ -868,6 +881,9 @@ window.addEventListener('load', event => {
 		switch (event.keyCode) {
 			case 8: // Backspace
 				toggleMetronome();
+				break;
+			case 32: // Space
+				play();
 				break;
 			case 220: //Enter
 				toggleRecording();
