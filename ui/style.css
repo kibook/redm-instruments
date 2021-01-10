@@ -63,6 +63,7 @@ input {
 	background-color: rgba(0, 0, 0, 0.5);
 	color: white;
 	border: solid 1px white;
+	box-sizing: content-box;
 }
 
 input:disabled {
@@ -138,7 +139,6 @@ input[type=range]:focus {
 
 #settings {
 	display: flex;
-	align-items: center;
 }
 
 #settings span {
