@@ -175,3 +175,11 @@ input[type=range]:focus {
 	border: solid 1px white;
 	padding: 0 0.1vw;
 }
+
+#close-quit {
+	display: flex;
+}
+
+#close-quit * {
+	flex-grow: 1;
+}

@@ -837,6 +837,10 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
+	document.getElementById('quit').addEventListener('click', function(event) {
+		sendMessage('closeUiAndQuit', {});
+	});
+
 	document.getElementById('keyboard').addEventListener('keydown', event => {
 		switch (event.keyCode) {
 			case 33: // Page Down

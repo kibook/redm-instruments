@@ -427,6 +427,12 @@ RegisterNUICallback('closeUi', function(data, cb)
 	cb({})
 end)
 
+RegisterNUICallback('closeUiAndQuit', function(data, cb)
+	HideUi()
+	StopPlayingInstrument()
+	cb({})
+end)
+
 RegisterNUICallback('startRecording', function(data, cb)
 	StartRecording()
 	cb({})
