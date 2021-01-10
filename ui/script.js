@@ -804,6 +804,7 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('metronome').addEventListener('click', function(event) {
+		toggleMetronome();
 		document.getElementById('keyboard').focus();
 	});
 
