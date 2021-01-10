@@ -224,6 +224,9 @@ var recording = false;
 var recordingPlayback = false;
 var recordingLength = 0;
 
+var tempo = 120;
+var metronome;
+
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
 		method: 'POST',
@@ -624,10 +627,11 @@ function stopRecording() {
 
 function eraseRecording() {
 	sendMessage('eraseRecording', {}).then(() => {
-		document.getElementById('time').innerHTML = '00:00:00/00:00:00';
 		recording = false;
 		recordingPlayback = false;
 		recordingLength = 0;
+		document.getElementById('time').innerHTML = '00:00:00/00:00:00';
+		document.getElementById('record').style.color = null;
 	});
 }
 
@@ -643,6 +647,16 @@ function stopRecordingPlayback() {
 		recordingPlayback = false;
 		document.getElementById('time').innerHTML = '00:00:00/' + timeToString(recordingLength);
 	});
+}
+
+function toggleMetronome() {
+	if (metronome.isRunning) {
+		metronome.stop();
+		document.getElementById('metronome').style.color = null;
+	} else {
+		metronome.start();
+		document.getElementById('metronome').style.color = 'red';
+	}
 }
 
 window.addEventListener('message', event => {
@@ -681,6 +695,9 @@ window.addEventListener('load', event => {
 		volumeFactor = minVolumeFactor;
 
 		setSoundfont(resp.soundfontUrl, resp.instrumentsUrl);
+
+		document.getElementById('tempo').value = tempo;
+		metronome = new Metronome(tempo);
 
 		document.getElementById('channel').value = midiChannel;
 	});
@@ -779,6 +796,27 @@ window.addEventListener('load', event => {
 
 	document.getElementById('erase').addEventListener('click', function(event) {
 		eraseRecording();
+		document.getElementById('keyboard').focus();
+	});
+
+	document.getElementById('metronome').addEventListener('click', function(event) {
+		document.getElementById('keyboard').focus();
+	});
+
+	document.getElementById('tempo').addEventListener('input', function(event) {
+		var t = parseInt(this.value);
+
+		var running = metronome.isRunning;
+
+		tempo = t;
+		metronome.stop();
+		metronome = new Metronome(tempo);
+
+		if (running) {
+			metronome.start();
+		}
+
+		document.getElementById('keyboard').focus();
 	});
 
 	document.getElementById('keyboard').addEventListener('keydown', event => {
@@ -850,6 +888,9 @@ window.addEventListener('keydown', event => {
 
 window.addEventListener('keyup', event => {
 	switch (event.keyCode) {
+		case 8: // Backspace
+			toggleMetronome();
+			break;
 		case 16: // Shift
 			shiftKey = false;
 			break;

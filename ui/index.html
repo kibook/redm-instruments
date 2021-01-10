@@ -18,6 +18,7 @@
 		<script src="MIDI.js/js/midi/player.js"></script>
 		<script src="MIDI.js/js/util/dom_request_xhr.js"></script>
 		<script src="MIDI.js/js/util/dom_request_script.js"></script>
+		<script src="metronome.js"></script>
 		<script src="https://kit.fontawesome.com/5537a772c3.js" crossorigin="anonymous"></script>
 		<link rel="stylesheet" href="style.css">
 		<script src="script.js"></script>
@@ -52,6 +53,11 @@
 					<option value="partial">Partial</option>
 					<option value="full">Full</option>
 				</select>
+				<span>Tempo:</span>
+				<input id="tempo" type="number" min="30" max="400" step="10">
+				<button id="metronome">
+					<i class="fas fa-clock"></i>
+				</button>
 			</div>
 			<div id="keyboard" tabindex="0">
 				<svg viewBox="0 0 1680 400">

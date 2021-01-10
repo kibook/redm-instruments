@@ -22,7 +22,8 @@ files {
 	'ui/MIDI.js/js/midi/plugin.webmidi.js',
 	'ui/MIDI.js/js/midi/player.js',
 	'ui/MIDI.js/js/util/dom_request_script.js',
-	'ui/MIDI.js/js/util/dom_request_xhr.js'
+	'ui/MIDI.js/js/util/dom_request_xhr.js',
+	'ui/metronome.js'
 }
 
 ui_page 'ui/index.html'
