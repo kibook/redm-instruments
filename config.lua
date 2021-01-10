@@ -133,5 +133,28 @@ Config.Instruments = {
 			name = 'p_playing',
 			flag = 1
 		}
+	},
+	['harmonica'] = {
+		midiInstrument = 'harmonica',
+		prop = {
+			model = 'p_harmonica01x',
+			bone = 'skel_l_hand',
+			x = 0.08,
+			y = 0.03,
+			z = 0.08,
+			pitch = 0.0,
+			roll = 90.0,
+			yaw = 0.0
+		},
+		inactiveAnimation = {
+			dict = 'amb_misc@prop_human_seat_bench@harmonica@resting@male_a@base',
+			name = 'base',
+			flag = 25
+		},
+		activeAnimation = {
+			dict = 'ai_gestures@instruments@harmonica@seated@120bpm',
+			name = 'spine_bwd_01',
+			flag = 25
+		}
 	}
 }
