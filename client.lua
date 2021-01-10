@@ -231,6 +231,10 @@ function GetAnimation(ped, instrument)
 end
 
 function PlayAnimation(ped, anim)
+	if not DoesAnimDictExist(anim.dict) then
+		return
+	end
+
 	RequestAnimDict(anim.dict)
 
 	while not HasAnimDictLoaded(anim.dict) do

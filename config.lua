@@ -170,5 +170,28 @@ Config.Instruments = {
 				flag = 25
 			}
 		}
+	},
+	['concertina'] = {
+		midiInstrument = 'accordion',
+		prop = {
+			model = 'p_cs_concertina01x',
+			bone = 'skel_r_hand',
+			x = 0.0,
+			y = 0.0,
+			z = 0.0,
+			pitch = 0.0,
+			roll = 270.0,
+			yaw = 0.0
+		},
+		inactiveAnimation = {
+			dict = 'amb_misc@prop_human_seat_bench@concertina@male_a@base',
+			name = 'base',
+			flag = 25
+		},
+		activeAnimation = {
+			dict = 'ai_gestures@instruments@concertina@seated@120bpm',
+			name = 'longs_med_01',
+			flag = 25
+		}
 	}
 }
