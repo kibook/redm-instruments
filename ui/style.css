@@ -139,6 +139,7 @@ input[type=range]:focus {
 
 .piano-key-label {
 	text-anchor: middle;
+	pointer-events: none;
 }
 
 .piano-key-label.white-key {
