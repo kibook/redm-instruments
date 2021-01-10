@@ -659,6 +659,14 @@ function toggleMetronome() {
 	}
 }
 
+function toggleRecording() {
+	if (recording) {
+		stopRecording();
+	} else {
+		startRecording();
+	}
+}
+
 window.addEventListener('message', event => {
 	switch (event.data.type) {
 		case 'showUi':
@@ -786,11 +794,7 @@ window.addEventListener('load', event => {
 	});
 
 	document.getElementById('record').addEventListener('click', function(event) {
-		if (recording) {
-			stopRecording();
-		} else {
-			startRecording();
-		}
+		toggleRecording();
 		document.getElementById('keyboard').focus();
 	});
 
@@ -861,6 +865,12 @@ window.addEventListener('load', event => {
 
 	document.getElementById('keyboard').addEventListener('keyup', event => {
 		switch (event.keyCode) {
+			case 8: // Backspace
+				toggleMetronome();
+				break;
+			case 220: //Enter
+				toggleRecording();
+				break;
 			default:
 				var key = keys[event.keyCode];
 
@@ -888,9 +898,6 @@ window.addEventListener('keydown', event => {
 
 window.addEventListener('keyup', event => {
 	switch (event.keyCode) {
-		case 8: // Backspace
-			toggleMetronome();
-			break;
 		case 16: // Shift
 			shiftKey = false;
 			break;
