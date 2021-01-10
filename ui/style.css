@@ -137,6 +137,18 @@ input[type=range]:focus {
 	fill: #4B4B4B;
 }
 
+.piano-key-label {
+	text-anchor: middle;
+}
+
+.piano-key-label.white-key {
+	fill: black;
+}
+
+.piano-key-label.black-key {
+	fill: white;
+}
+
 #settings {
 	display: flex;
 }
