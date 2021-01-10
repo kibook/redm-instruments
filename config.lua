@@ -91,22 +91,22 @@ Config.Instruments = {
 		midiInstrument = 'acoustic_guitar_nylon',
 		prop = {
 			model = 'p_guitar01x',
-			bone = 'SM_L_pistol',
-			x = -0.2,
-			y = -0.6,
-			z = 0.3,
-			pitch = 270.0,
-			roll = 0.0,
-			yaw = 20.0
+			bone = 'scale_pelvis',
+			x = -0.05,
+			y = 0.36,
+			z = 0.14,
+			pitch = -15.0,
+			roll = 150.0,
+			yaw = 180.0
 		},
 		inactiveAnimation = {
-			dict = 'ai_gestures@instruments@guitar@standing@male@normal',
-			name = 'guitar_base',
+			dict = 'ai_gestures@instruments@guitar@seated@80bpm',
+			name = 'generic_01',
 			flag = 25
 		},
 		activeAnimation = {
-			dict = 'ai_gestures@instruments@guitar@standing@male@normal',
-			name = 'guitar_med_melody_-1_0_+1_01',
+			dict = 'ai_gestures@instruments@guitar@seated@120bpm',
+			name = 'upbeat_picking_fast_chords_rt_0_+1_03',
 			flag = 25
 		}
 	},
