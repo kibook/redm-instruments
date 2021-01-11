@@ -873,6 +873,14 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
+	document.getElementById('help-button').addEventListener('click',  function(event) {
+		document.getElementById('help').style.display = 'flex';
+	});
+
+	document.getElementById('close-help').addEventListener('click', function(event) {
+		document.getElementById('help').style.display = 'none';
+	});
+
 	document.getElementById('keyboard').addEventListener('keydown', event => {
 		switch (event.keyCode) {
 			case 33: // Page Down

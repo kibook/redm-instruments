@@ -7,6 +7,7 @@ files {
 	'ui/style.css',
 	'ui/script.js',
 	'ui/chineserocks.ttf',
+	'ui/keyboard.ttf',
 	'ui/MIDI.js/inc/shim/Base64.js',
 	'ui/MIDI.js/inc/shim/Base64binary.js',
 	'ui/MIDI.js/inc/shim/WebAudioAPI.js',

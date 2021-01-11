@@ -3,6 +3,11 @@
 	src: url("chineserocks.ttf");
 }
 
+@font-face {
+	font-family: "212 Keyboard";
+	src: url("keyboard.ttf");
+}
+
 * {
 	font-family: inherit;
 	font-size: inherit;
@@ -185,4 +190,67 @@ input[type=range]:focus {
 
 #interaction {
 	flex-grow: 1;
+}
+
+#help {
+	display: none;
+	flex-flow: column;
+	position: absolute;
+	top: 10%;
+	left: 50%;
+	height: 60%;
+	width: 50%;
+	transform: translate(-50%, 0);
+	background-color: rgba(0, 0, 0, 0.75);
+	padding: 1vh 1vw;
+}
+
+#help-content {
+	overflow-y: auto;
+	flex-grow: 1;
+	font-family: Helvetica;
+	font-size: 1.5vh;
+}
+
+td {
+	text-align: left;
+	vertical-align: middle;
+	padding: 0.5vh 0.5vw;
+}
+
+#help-menu-controls {
+	display: flex;
+	padding: 0.5vh 0;
+}
+
+#close-help {
+	flex-grow: 1;
+}
+
+h1 {
+	color: #b00;
+	font-size: 2.5vh;
+	font-weight: normal;
+	font-family: "Chinese Rocks";
+}
+
+h2 {
+	font-size: 2vh;
+	font-weight: normal;
+	font-family: "Chinese Rocks";
+}
+
+h3 {
+	font-size: 1.7vh;
+	font-weight: normal;
+	font-family: "Chinese Rocks";
+}
+
+strong {
+	color: #b00;
+}
+
+.control {
+	font-family: "212 Keyboard";
+	font-size: 4vh;
 }
