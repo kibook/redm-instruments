@@ -25,6 +25,12 @@
 	</head>
 	<body>
 		<div id="ui">
+			<div id="interactions">
+				<span>Interaction:</span>
+				<select id="interaction"></select>
+				<button id="start-interaction">Start</button>
+				<button id="stop-interaction">Stop</button>
+			</div>
 			<div id="midi-player">
 				<input id="url" type="text" placeholder="Enter MIDI URL...">
 				<div id="time">00:00:00/00:00:00</div>
@@ -149,10 +155,7 @@
 					</g>
 				</svg>
 			</div>
-			<div id="close-quit">
-				<button id="close">Close</button>
-				<button id="quit">Quit</button>
-			</div>
+			<button id="close">Close</button>
 		</div>
 	</body>
 </html>

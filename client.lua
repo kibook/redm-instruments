@@ -412,7 +412,8 @@ RegisterNUICallback('init', function(data, cb)
 		minVolumeFactor = Config.MinVolumeFactor,
 		maxVolumeFactor = Config.MaxVolumeFactor,
 		soundfontUrl = Config.SoundfontUrl,
-		instrumentsUrl = Config.InstrumentsUrl
+		instrumentsUrl = Config.InstrumentsUrl,
+		instruments = GetInstrumentList()
 	})
 end)
 
@@ -428,12 +429,6 @@ end)
 
 RegisterNUICallback('closeUi', function(data, cb)
 	HideUi()
-	cb({})
-end)
-
-RegisterNUICallback('closeUiAndQuit', function(data, cb)
-	HideUi()
-	StopPlayingInstrument()
 	cb({})
 end)
 
@@ -456,6 +451,16 @@ end)
 
 RegisterNUICallback('eraseRecording', function(data, cb)
 	EraseRecording()
+	cb({})
+end)
+
+RegisterNUICallback('startPlayingInstrument', function(data, cb)
+	StartPlayingInstrument(data.instrument)
+	cb({})
+end)
+
+RegisterNUICallback('stopPlayingInstrument', function(data, cb)
+	StopPlayingInstrument()
 	cb({})
 end)
 

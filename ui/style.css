@@ -152,9 +152,10 @@ input[type=range]:focus {
 
 #settings {
 	display: flex;
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
-#settings span {
+#interactions span, #settings span {
 	border: 1px solid white;
 	padding: 0.1vh 0.1vw;
 }
@@ -165,6 +166,7 @@ input[type=range]:focus {
 
 #midi-player {
 	display: flex;
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
 #url {
@@ -176,10 +178,11 @@ input[type=range]:focus {
 	padding: 0 0.1vw;
 }
 
-#close-quit {
+#interactions {
 	display: flex;
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
-#close-quit * {
+#interaction {
 	flex-grow: 1;
 }

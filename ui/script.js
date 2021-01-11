@@ -687,6 +687,19 @@ function play() {
 	}
 }
 
+function populateInteractions(instruments) {
+	var interactionSelect = document.getElementById('interaction');
+
+	interactionSelect.innerHTML = '';
+
+	instruments.forEach(instrument => {
+		var option = document.createElement('option');
+		option.value = instrument;
+		option.innerHTML = instrument;
+		interactionSelect.appendChild(option);
+	});
+}
+
 window.addEventListener('message', event => {
 	switch (event.data.type) {
 		case 'showUi':
@@ -728,6 +741,8 @@ window.addEventListener('load', event => {
 		metronome = new Metronome(tempo);
 
 		document.getElementById('channel').value = midiChannel;
+
+		populateInteractions(resp.instruments);
 	});
 
 	document.querySelectorAll('.piano-key').forEach(key => {
@@ -837,8 +852,20 @@ window.addEventListener('load', event => {
 		document.getElementById('keyboard').focus();
 	});
 
-	document.getElementById('quit').addEventListener('click', function(event) {
-		sendMessage('closeUiAndQuit', {});
+	document.getElementById('start-interaction').addEventListener('click', function(event) {
+		var instrument = document.getElementById('interaction').value;
+
+		sendMessage('startPlayingInstrument', {
+			instrument: instrument
+		});
+
+		document.getElementById('keyboard').focus();
+	});
+
+	document.getElementById('stop-interaction').addEventListener('click', function(event) {
+		sendMessage('stopPlayingInstrument', {});
+
+		document.getElementById('keyboard').focus();
 	});
 
 	document.getElementById('keyboard').addEventListener('keydown', event => {
