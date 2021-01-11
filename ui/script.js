@@ -310,11 +310,16 @@ function noteOn(data) {
 
 	var volume = ((127 - data.distance * attenuationFactor) / volumeFactor) * maxVolume;
 
-	setInstrument(data.channel, data.instrument).then(() => {
-		MIDI.programChange(data.channel, MIDI.GM.byName[data.instrument].number);
+	if (data.instrument) {
+		setInstrument(data.channel, data.instrument).then(() => {
+			MIDI.programChange(data.channel, MIDI.GM.byName[data.instrument].number);
+			MIDI.setVolume(data.channel, volume);
+			MIDI.noteOn(data.channel, note, 127, 0);
+		});
+	} else {
 		MIDI.setVolume(data.channel, volume);
 		MIDI.noteOn(data.channel, note, 127, 0);
-	});
+	}
 }
 
 function noteOff(data) {

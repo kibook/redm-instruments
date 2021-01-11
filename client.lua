@@ -259,6 +259,38 @@ function GetInstrumentList()
 	return instruments
 end
 
+function RecordNoteOn(channel, note, octave)
+	local lastEvent = Recording.buffer[#Recording.buffer]
+
+	if lastEvent then
+		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
+	end
+
+	table.insert(Recording.buffer, {
+		type = 'noteOn',
+		time = GetSystemTime() - Recording.startTime,
+		channel = channel,
+		note = note,
+		octave = octave
+	})
+end
+
+function RecordNoteOff(channel, note, octave)
+	local lastEvent = Recording.buffer[#Recording.buffer]
+
+	if lastEvent then
+		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
+	end
+
+	table.insert(Recording.buffer, {
+		type = 'noteOff',
+		time = GetSystemTime() - Recording.startTime,
+		channel = channel,
+		note = note,
+		octave = octave
+	})
+end
+
 function NoteOn(channel, instrument, note, octave)
 	TriggerServerEvent('instruments:noteOn', channel, instrument, note, octave)
 
@@ -269,7 +301,7 @@ function NoteOn(channel, instrument, note, octave)
 			PlaybackRecording()
 		end
 
-		RecordNoteOn(channel, instrument, note, octave)
+		RecordNoteOn(channel, note, octave)
 	end
 end
 
@@ -313,39 +345,6 @@ function RecordWait(duration)
 	})
 end
 
-function RecordNoteOn(channel, instrument, note, octave)
-	local lastEvent = Recording.buffer[#Recording.buffer]
-
-	if lastEvent then
-		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
-	end
-
-	table.insert(Recording.buffer, {
-		type = 'noteOn',
-		time = GetSystemTime() - Recording.startTime,
-		channel = channel,
-		instrument = instrument,
-		note = note,
-		octave = octave
-	})
-end
-
-function RecordNoteOff(channel, note, octave)
-	local lastEvent = Recording.buffer[#Recording.buffer]
-
-	if lastEvent then
-		RecordWait(GetSystemTime() - Recording.startTime - lastEvent.time)
-	end
-
-	table.insert(Recording.buffer, {
-		type = 'noteOff',
-		time = GetSystemTime() - Recording.startTime,
-		channel = channel,
-		note = note,
-		octave = octave
-	})
-end
-
 function PlaybackRecording()
 	CreateThread(function()
 		Recording.playing = true
@@ -361,7 +360,6 @@ function PlaybackRecording()
 				SendNUIMessage({
 					type = 'noteOn',
 					channel = event.channel,
-					instrument = event.instrument,
 					note = event.note,
 					octave = event.octave,
 					distance = 0,
