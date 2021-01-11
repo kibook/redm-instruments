@@ -133,6 +133,7 @@ function StopPlayingInstrument()
 
 	local instrument = CurrentInstrument
 	CurrentInstrument = nil
+	Wait(500)
 
 	local ped = PlayerPedId()
 
@@ -392,7 +393,7 @@ function EraseRecording()
 end
 
 RegisterCommand('instrument', function(source, args, raw)
-	if args[1] == 'quit' then
+	if args[1] == 'stop' then
 		StopPlayingInstrument()
 	else
 		ShowUi()
@@ -545,7 +546,7 @@ end
 
 CreateThread(function()
 	TriggerEvent('chat:addSuggestion', '/instrument', 'Play an instrument', {
-		{name = 'instrument', help = table.concat(GetInstrumentList(), ', ') .. ', quit'}
+		{name = 'instrument', help = table.concat(GetInstrumentList(), ', ') .. ', or stop to stop playing an instrument'}
 	})
 
 	while true do
