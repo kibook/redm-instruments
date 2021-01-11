@@ -133,7 +133,6 @@ function StopPlayingInstrument()
 
 	local instrument = CurrentInstrument
 	CurrentInstrument = nil
-	Wait(500)
 
 	local ped = PlayerPedId()
 
