@@ -193,5 +193,28 @@ Config.Instruments = {
 			name = 'longs_med_01',
 			flag = 25
 		}
+	},
+	['banjo'] = {
+		midiInstrument = 'banjo',
+		prop = {
+			model = 'p_banjo01x',
+			bone = 'skel_spine0',
+			x = 0.05,
+			y = 0.25,
+			z = -0.22,
+			pitch = -4.0,
+			roll = -30.0,
+			yaw = 180.0
+		},
+		inactiveAnimation = {
+			dict = 'ai_gestures@instruments@banjo@seated@male@normal',
+			name = 'banjo_base',
+			flag = 25
+		},
+		activeAnimation = {
+			dict = 'ai_gestures@instruments@banjo@seated@120bpm',
+			name = 'spine_0_hand_0_01',
+			flag = 25
+		}
 	}
 }
