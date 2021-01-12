@@ -343,7 +343,7 @@ function midiNoteToKey(note) {
 	var noteName = midiNoteName(note);
 	var octave = midiNoteOctave(note);
 
-	return document.getElementById(`key-${noteName}${octave - baseOctave}`);
+	return document.getElementById(`key-${noteName}${octave - baseOctave + 1}`);
 }
 
 function sendNoteOn(channel, note, octave, echo) {
