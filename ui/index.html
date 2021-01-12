@@ -56,6 +56,8 @@
 				<select id="instrument"></select>
 				<span>Octave:</span>
 				<input id="octave" type="number" min="1" max="6" step="1">
+				<span>Transpose:</span>
+				<input id="transpose" type="number" min="-127" max="127" step="1">
 				<span>Chords:</span>
 				<select id="chords">
 					<option value="off">Off</option>
@@ -187,6 +189,10 @@
 					</tr>
 					<tr>
 						<td class="control">jl</td>
+						<td>+/- Semitone</td>
+					</tr>
+					<tr>
+						<td class="control">ik</td>
 						<td>+/- Channel</td>
 					</tr>
 					<tr>
@@ -208,12 +214,15 @@
 				<p>To erase your recording and start fresh, click the erase <i class="fas fa-eraser"></i> button.</p>
 				<h2>General settings</h2>
 				<h3>Channel</h3>
-				<p>There are 16 channels players can use, corresponding to the 16 MIDI channels. Each channel can only be assigned one instrument at a time, so multiple in the same area players with different instruments should each choose a different channel to play on. To change the current channel, use the <strong>CH:</strong> field, or press <span class="control">j</span> and <span class="control">l</span>.</p>
+				<p>There are 16 channels players can use, corresponding to the 16 MIDI channels. Each channel can only be assigned one instrument at a time, so multiple in the same area players with different instruments should each choose a different channel to play on. To change the current channel, use the <strong>CH:</strong> field, or press <span class="control">i</span> and <span class="control">k</span>.</p>
 				<h3>Instrument</h3>
 				<p>The instrument drop-down list lets you choose which MIDI instrument to use when playing notes. Interactions with instrument objects will set this to a default instrument (for example, <strong>guitar</strong> will set <strong>acoustic_guitar_nylon</strong>), but you are free to choose any of the available instruments.</p>
 				<h3>Octave</h3>
 				<p>The <strong>Octave:</strong> field sets the base octave of the keyboard. For example, if this is set to <strong>3</strong>, then the first key on the keyboard will be C3.</p>
 				<p>You can also change octaves using <span class="control">v</span> and <span class="control">u</span>.</p>
+				<h3>Transpose</h3>
+				<p>The <strong>Transpose:</strong> field sets the number of semitones to transpose notes by.</p>
+				<p>You can also change the transposition using <span class="control">j</span> and <span class="control">l</span>.</p>
 				<h3>Chords</h3>
 				<p>The chord modes allow you to play a chord with a single key. For example, pressing <span class="control">Z</span>, which corresponds to C, will produce a C major chord.</p>
 				<p>The <strong>Chords:</strong> drop-down list selects between different chord modes:

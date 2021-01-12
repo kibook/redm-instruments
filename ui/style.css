@@ -37,7 +37,6 @@ button {
 	color: white;
 	border: solid 1px white;
 	font-family: "Chinese Rocks";
-	font-size: 2vh;
 }
 
 button:hover:enabled, button:focus:enabled {
@@ -158,11 +157,13 @@ input[type=range]:focus {
 #settings {
 	display: flex;
 	background-color: rgba(0, 0, 0, 0.5);
+	font-size: 1.8vh;
 }
 
 #interactions span, #settings span {
 	border: 1px solid white;
 	padding: 0.1vh 0.1vw;
+	font-size: 1.8vh;
 }
 
 #instrument {
@@ -172,6 +173,7 @@ input[type=range]:focus {
 #midi-player {
 	display: flex;
 	background-color: rgba(0, 0, 0, 0.5);
+	font-size: 1.8vh;
 }
 
 #url {

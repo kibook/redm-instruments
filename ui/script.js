@@ -227,6 +227,8 @@ var recordingLength = 0;
 var tempo = 120;
 var metronome;
 
+var transpose = 0;
+
 function sendMessage(name, params) {
 	return fetch('https://' + GetParentResourceName() + '/' + name, {
 		method: 'POST',
@@ -329,13 +331,35 @@ function noteOff(data) {
 	MIDI.noteOff(data.channel, note, 0);
 }
 
+function midiNoteName(note) {
+	return notes[note % 12];
+}
+
+function midiNoteOctave(note) {
+	return Math.floor(note / 12 - 1);
+}
+
+function midiNoteToKey(note) {
+	var noteName = midiNoteName(note);
+	var octave = midiNoteOctave(note);
+
+	return document.getElementById(`key-${noteName}${octave - baseOctave}`);
+}
+
 function sendNoteOn(channel, note, octave, echo) {
 	var instrument;
-	
+
 	if (channels[channel]) {
 		instrument = channels[channel];
 	} else {
 		instrument = document.getElementById('instrument').value;
+	}
+
+	if (transpose != 0) {
+		var noteName = `${note}${octave}`;
+		var midiNote = MIDI.keyToNote[noteName] + transpose;
+		note = midiNoteName(midiNote);
+		octave = midiNoteOctave(midiNote);
 	}
 
 	sendMessage('noteOn', {
@@ -358,6 +382,13 @@ function sendNoteOn(channel, note, octave, echo) {
 }
 
 function sendNoteOff(channel, note, octave, echo) {
+	if (transpose != 0) {
+		var noteName = `${note}${octave}`;
+		var midiNote = MIDI.keyToNote[noteName] + transpose;
+		note = midiNoteName(midiNote);
+		octave = midiNoteOctave(midiNote);
+	}
+
 	sendMessage('noteOff', {
 		channel: channel,
 		note: note,
@@ -441,21 +472,6 @@ function deactivateKey(key, echo) {
 	unhighlightKey(key);
 
 	activatedKeys[key.id] = false;
-}
-
-function midiNoteName(note) {
-	return notes[note % 12];
-}
-
-function midiNoteOctave(note) {
-	return Math.floor(note / 12);
-}
-
-function midiNoteToKey(note) {
-	var noteName = midiNoteName(note);
-	var octave = midiNoteOctave(note);
-
-	return document.getElementById(`key-${noteName}${octave - baseOctave}`);
 }
 
 function setSoundfont(soundfontUrl, instrumentsUrl) {
@@ -747,6 +763,8 @@ window.addEventListener('load', event => {
 
 		document.getElementById('channel').value = midiChannel;
 
+		document.getElementById('transpose').value = transpose;
+
 		populateInteractions(resp.instruments);
 	});
 
@@ -879,6 +897,11 @@ window.addEventListener('load', event => {
 
 	document.getElementById('close-help').addEventListener('click', function(event) {
 		document.getElementById('help').style.display = 'none';
+	});
+
+	document.getElementById('transpose').addEventListener('input', function(event) {
+		transpose = parseInt(this.value);
+		document.getElementById('keyboard').focus();
 	});
 
 	document.getElementById('keyboard').addEventListener('keydown', event => {
