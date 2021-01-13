@@ -660,10 +660,6 @@ function eraseRecording() {
 }
 
 function startRecordingPlayback() {
-	if (recordingPlayback) {
-		return;
-	}
-
 	sendMessage('playbackRecording');
 
 	recordingPlayback = Date.now();

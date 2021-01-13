@@ -393,6 +393,8 @@ function PlaybackRecording()
 				Wait(event.duration)
 			end
 		end
+
+		Recording.playing = false
 	end)
 end
 
