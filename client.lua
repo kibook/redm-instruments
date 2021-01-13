@@ -124,6 +124,7 @@ function StartPlayingInstrument(instrument)
 	end
 
 	ActivelyPlayingTimer = 0
+	NotesPlaying = 0
 end
 
 function StopPlayingInstrument()
@@ -210,10 +211,20 @@ function GetListenerInfo()
 	return ped, listenerCoords
 end
 
+function IsActivelyPlaying()
+	local isPlaying = GetSystemTime() < ActivelyPlayingTimer
+
+	if not isPlaying and NotesPlaying > 0 then
+		NotesPlaying = 0
+	end
+
+	return isPlaying
+end
+
 function GetAnimation(ped, instrument)
 	local anim
 
-	if NotesPlaying > 0 or GetSystemTime() < ActivelyPlayingTimer then
+	if IsActivelyPlaying() then
 		anim = instrument.activeAnimation
 	else
 		anim = instrument.inactiveAnimation
@@ -294,6 +305,7 @@ function NoteOn(channel, instrument, note, octave)
 	TriggerServerEvent('instruments:noteOn', channel, instrument, note, octave)
 
 	NotesPlaying = NotesPlaying + 1
+	ActivelyPlayingTimer = GetSystemTime() + 4000
 
 	if Recording.active then
 		if not Recording.playing then
@@ -308,6 +320,10 @@ function NoteOff(channel, note, octave)
 	TriggerServerEvent('instruments:noteOff', channel, note, octave)
 
 	NotesPlaying = NotesPlaying - 1
+
+	if NotesPlaying < 0 then
+		NotesPlaying = 0
+	end
 
 	if NotesPlaying == 0 then
 		ActivelyPlayingTimer = GetSystemTime() + 500
