@@ -914,13 +914,25 @@ window.addEventListener('load', event => {
 				}
 				document.getElementById('octave').value = baseOctave;
 				break;
-			case 45: // Home
+			case 36:
+				if (transpose < 127) {
+					++transpose;
+				}
+				document.getElementById('transpose').value = transpose;
+				break;
+			case 35:
+				if (transpose > -127) {
+					--transpose;
+				}
+				document.getElementById('transpose').value = transpose;
+				break;
+			case 45: // Insert
 				if (midiChannel < 15) {
 					++midiChannel;
 				}
 				document.getElementById('channel').value = midiChannel;
 				break;
-			case 46: // End
+			case 46: // Delete
 				if (midiChannel > 0) {
 					--midiChannel;
 				}
