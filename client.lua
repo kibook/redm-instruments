@@ -15,6 +15,9 @@ local Recording = {
 
 RegisterNetEvent('instruments:noteOn')
 RegisterNetEvent('instruments:noteOff')
+RegisterNetEvent('instruments:showUi')
+RegisterNetEvent('instruments:hideUi')
+RegisterNetEvent('instruemnts:toggleUi')
 
 local entityEnumerator = {
 	__gc = function(enum)
@@ -535,6 +538,10 @@ AddEventHandler('instruments:noteOff', function(serverId, channel, note, octave)
 		})
 	end
 end)
+
+AddEventHandler('instruments:showUi', ShowUi)
+AddEventHandler('instruments:hideUi', HideUi)
+AddEventHandler('instruments:toggleUi', ToggleUi)
 
 function CreateInstrumentObject()
 	local model = CurrentInstrument.prop.model
