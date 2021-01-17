@@ -424,7 +424,9 @@ function recvNoteOn(data) {
 		var note = MIDI.keyToNote[noteName];
 		var key = midiNoteToKey(note);
 
-		highlightKey(key, false);
+		if (key) {
+			highlightKey(key, false);
+		}
 	}
 }
 
@@ -436,7 +438,9 @@ function recvNoteOff(data) {
 		var note = MIDI.keyToNote[noteName];
 		var key = midiNoteToKey(note);
 
-		unhighlightKey(key);
+		if (key) {
+			unhighlightKey(key);
+		}
 	}
 }
 
