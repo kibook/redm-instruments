@@ -92,7 +92,7 @@ function AttachToInstrument(ped, info)
 	local object = GetClosestInstrumentObject(ped, info)
 
 	if object then
-		AttachEntityToEntity(ped, object, 0, info.x, info.y, info.z, info.pitch, info.roll, info.yaw, false, false, true, false, 0, true, false, false)
+		AttachEntityToEntity(ped, object, 0, info.position, info.rotation, false, false, true, false, 0, true, false, false)
 		return true
 	else
 		return false
@@ -144,8 +144,12 @@ function StopPlayingInstrument()
 		DetachFromInstrument(ped)
 	end
 
-	if instrument.prop and instrument.prop.handle then
-		DeleteObject(instrument.prop.handle)
+	if instrument.props then
+		for _, prop in ipairs(instrument.props) do
+			if prop.handle then
+				DeleteObject(prop.handle)
+			end
+		end
 	end
 
 	local anim = GetAnimation(ped, instrument)
@@ -543,27 +547,18 @@ AddEventHandler('instruments:showUi', ShowUi)
 AddEventHandler('instruments:hideUi', HideUi)
 AddEventHandler('instruments:toggleUi', ToggleUi)
 
-function CreateInstrumentObject()
-	local model = CurrentInstrument.prop.model
-
-	CurrentInstrument.prop.handle = CreateObjectNoOffset(GetHashKey(model), 0.0, 0.0, 0.0, true, false, false, false)
+function CreateInstrumentObject(prop)
+	prop.handle = CreateObjectNoOffset(GetHashKey(prop.model), 0.0, 0.0, 0.0, true, false, false, false)
 end
 
-function AttachInstrumentObject(ped)
-	local handle = CurrentInstrument.prop.handle
-	local bone = CurrentInstrument.prop.bone
-	local x = CurrentInstrument.prop.x
-	local y = CurrentInstrument.prop.y
-	local z = CurrentInstrument.prop.z
-	local pitch = CurrentInstrument.prop.pitch
-	local roll = CurrentInstrument.prop.roll
-	local yaw = CurrentInstrument.prop.yaw
+function AttachInstrumentObject(ped, prop)
+	local bone = prop.bone
 
 	if type(bone) == 'string' then
 		bone = GetEntityBoneIndexByName(ped, bone)
 	end
 
-	AttachEntityToEntity(handle, ped, bone, x, y, z, pitch, roll, yaw, false, false, true, false, 0, true, false, false)
+	AttachEntityToEntity(prop.handle, ped, bone, prop.position, prop.rotation, false, false, true, false, 0, true, false, false)
 end
 
 CreateThread(function()
@@ -582,12 +577,14 @@ CreateThread(function()
 				PlayAnimation(ped, anim)
 			end
 
-			if CurrentInstrument.prop then
-				if not (CurrentInstrument.prop.handle and DoesEntityExist(CurrentInstrument.prop.handle)) then
-					CreateInstrumentObject()
-					AttachInstrumentObject(ped)
-				elseif not IsEntityAttachedToEntity(CurrentInstrument.prop.handle, ped) then
-					AttachInstrumentObject(ped)
+			if CurrentInstrument.props then
+				for _, prop in ipairs(CurrentInstrument.props) do
+					if not (prop.handle and DoesEntityExist(prop.handle)) then
+						CreateInstrumentObject(prop)
+						AttachInstrumentObject(ped, prop)
+					elseif not IsEntityAttachedToEntity(prop.handle, ped) then
+						AttachInstrumentObject(ped, prop)
+					end
 				end
 			end
 		end

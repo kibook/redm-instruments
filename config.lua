@@ -46,12 +46,8 @@ Config.Instruments = {
 				'p_piano03x',
 				'sha_man_piano01'
 			},
-			x = 0.0,
-			y = -0.77,
-			z = 0.55,
-			pitch = 0.0,
-			roll = 0.0,
-			yaw = 0.0
+			position = vector3(0.0, -0.77, 0.55),
+			rotation = vector3(0.0, 0.0, 0.0)
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@piano@male@normal',
@@ -66,15 +62,13 @@ Config.Instruments = {
 	},
 	['trumpet'] = {
 		midiInstrument = 'trumpet',
-		prop = {
-			model = 'p_trumpet01x',
-			bone = 'SKEL_R_Hand',
-			x = 0.07,
-			y = 0.0,
-			z = -0.05,
-			pitch = 270.0,
-			roll = 10.0,
-			yaw = -80.0
+		props = {
+			{
+				model = 'p_trumpet01x',
+				bone = 'SKEL_R_Hand',
+				position = vector3(0.07, 0.0, -0.05),
+				rotation = vector3(270.0, 10.0, -80.0)
+			}
 		},
 		inactiveAnimation = {
 			dict = 'amb_misc@world_human_trumpet@male_a@base',
@@ -89,15 +83,13 @@ Config.Instruments = {
 	},
 	['guitar'] = {
 		midiInstrument = 'acoustic_guitar_nylon',
-		prop = {
-			model = 'p_guitar01x',
-			bone = 'skel_spine0',
-			x = 0.17,
-			y = 0.35,
-			z = -0.12,
-			pitch = -18.0,
-			roll = -18.0,
-			yaw = 180.0
+		props = {
+			{
+				model = 'p_guitar01x',
+				bone = 'skel_spine0',
+				position = vector3(0.17, 0.35, -0.12),
+				rotation = vector3(-18.0, -18.0, 180.0)
+			}
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@guitar@seated@80bpm',
@@ -116,12 +108,8 @@ Config.Instruments = {
 			models = {
 				'p_harp01x'
 			},
-			x = 0.5,
-			y = -0.15,
-			z = 0.55,
-			pitch = 0.0,
-			roll = 0.0,
-			yaw = 90.0
+			position = vector3(0.5, -0.15, 0.55),
+			rotation = vector3(0.0, 0.0, 90.0)
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@band_test',
@@ -136,15 +124,13 @@ Config.Instruments = {
 	},
 	['harmonica'] = {
 		midiInstrument = 'harmonica',
-		prop = {
-			model = 'p_harmonica01x',
-			bone = 'skel_l_hand',
-			x = 0.08,
-			y = 0.03,
-			z = 0.08,
-			pitch = 0.0,
-			roll = 90.0,
-			yaw = 0.0
+		props = {
+			{
+				model = 'p_harmonica01x',
+				bone = 'skel_l_hand',
+				position = vector3(0.08, 0.03, 0.08),
+				rotation = vector3(0.0, 90.0, 0.0)
+			}
 		},
 		inactiveAnimation = {
 			female = {
@@ -173,15 +159,13 @@ Config.Instruments = {
 	},
 	['concertina'] = {
 		midiInstrument = 'accordion',
-		prop = {
-			model = 'p_cs_concertina01x',
-			bone = 'skel_r_hand',
-			x = 0.0,
-			y = 0.0,
-			z = 0.0,
-			pitch = 0.0,
-			roll = 270.0,
-			yaw = 0.0
+		props = {
+			{
+				model = 'p_cs_concertina01x',
+				bone = 'skel_r_hand',
+				position = vector3(0.0, 0.0, 0.0),
+				rotation = vector3(0.0, 270.0, 0.0)
+			}
 		},
 		inactiveAnimation = {
 			dict = 'amb_misc@prop_human_seat_bench@concertina@male_a@base',
@@ -196,15 +180,13 @@ Config.Instruments = {
 	},
 	['banjo'] = {
 		midiInstrument = 'banjo',
-		prop = {
-			model = 'p_banjo01x',
-			bone = 'skel_spine0',
-			x = 0.05,
-			y = 0.25,
-			z = -0.22,
-			pitch = -4.0,
-			roll = -30.0,
-			yaw = 180.0
+		props = {
+			{
+				model = 'p_banjo01x',
+				bone = 'skel_spine0',
+				position = vector3(0.05, 0.25, -0.22),
+				rotation = vector3(-4.0, -30.0, 180.0)
+			}
 		},
 		inactiveAnimation = {
 			dict = 'ai_gestures@instruments@banjo@seated@male@normal',
@@ -215,6 +197,33 @@ Config.Instruments = {
 			dict = 'ai_gestures@instruments@banjo@seated@120bpm',
 			name = 'spine_0_hand_0_01',
 			flag = 25
+		}
+	},
+	['fiddle'] = {
+		midiInstrument = 'fiddle',
+		props = {
+			{
+				model = 'p_fiddle01x',
+				bone = 'skel_l_forearm',
+				position = vector3(0.07, 0.33, 0.11),
+				rotation = vector3(169.0, -73.0, -40.0)
+			},
+			{
+				model = 'p_bow01x',
+				bone = 'skel_r_hand',
+				position = vector3(0.06, -0.08, -0.029),
+				rotation = vector3(147, 270, 115)
+			}
+		},
+		inactiveAnimation = {
+			dict = 'ai_gestures@instruments@fiddle@standing@female@normal',
+			name = 'fiddle_base',
+			flag = 25
+		},
+		activeAnimation = {
+			dict = 'ai_gestures@instruments@fiddle@standing@female@normal',
+			name = 'fiddle_low_long_shorts_-1_01',
+			flag= 25
 		}
 	}
 }
