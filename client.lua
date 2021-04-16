@@ -19,41 +19,23 @@ RegisterNetEvent('instruments:showUi')
 RegisterNetEvent('instruments:hideUi')
 RegisterNetEvent('instruemnts:toggleUi')
 
-local entityEnumerator = {
-	__gc = function(enum)
-		if enum.destructor and enum.handle then
-			enum.destructor(enum.handle)
+function GetNearbyObjects(coords)
+	local itemset = CreateItemset(true)
+	local size = Citizen.InvokeNative(0x59B57C4B06531E1E, coords, Config.MaxInteractDistance, itemset, 3, Citizen.ResultAsInteger())
+
+	local objects = {}
+
+	if size > 0 then
+		for i = 0, size - 1 do
+			table.insert(objects, GetIndexedItemInItemset(i, itemset))
 		end
-		enum.destructor = nil
-		enum.handle = nil
 	end
-}
 
-function EnumerateEntities(firstFunc, nextFunc, endFunc)
-	return coroutine.wrap(function()
-		local iter, id = firstFunc()
+	if IsItemsetValid(itemset) then
+		DestroyItemset(itemset)
+	end
 
-		if not id or id == 0 then
-			endFunc(iter)
-			return
-		end
-
-		local enum = {handle = iter, destructor = endFunc}
-		setmetatable(enum, entityEnumerator)
-
-		local next = true
-		repeat
-			coroutine.yield(id)
-			next, id = nextFunc(iter)
-		until not next
-
-		enum.destructor, enum.handle = nil, nil
-		endFunc(iter)
-	end)
-end
-
-function EnumerateObjects()
-	return EnumerateEntities(FindFirstObject, FindNextObject, EndFindObject)
+	return objects
 end
 
 function IsInstrument(object, info)
@@ -73,12 +55,12 @@ function GetClosestInstrumentObject(ped, info)
 
 	local minDist, closest
 
-	for object in EnumerateObjects() do
+	for _, object in ipairs(GetNearbyObjects(pos)) do
 		if IsInstrument(object, info) then
 			local instrumentPos = GetEntityCoords(object)
 			local distance = #(pos - instrumentPos)
 
-			if distance <= Config.MaxInteractDistance and (not minDist or distance < minDist) then
+			if not minDist or distance < minDist then
 				minDist = distance
 				closest = object
 			end
